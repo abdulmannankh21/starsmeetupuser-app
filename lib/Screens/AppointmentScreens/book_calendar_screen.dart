@@ -241,6 +241,8 @@ class _BookingCalendarScreenState extends State<BookingCalendarScreen> {
                                                     timeSlots![i].endTime);
                                             appointment!.timeSlotId =
                                                 timeSlots![i].id;
+                                            appointment!.timeSlot =timeSlots![i].startTime;
+                                            print(timeSlots![i].startTime);
                                           } else {
                                             selectedTime = -1;
                                             startTime = null;

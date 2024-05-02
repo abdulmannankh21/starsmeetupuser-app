@@ -13,6 +13,7 @@ class AppointmentModel {
   DateTime? selectedDate;
   String? promoCode;
   String? timeSlotId;
+  String? timeSlot;
   double? supportYourStarCharges;
   String? paymentMethod;
 
@@ -22,6 +23,7 @@ class AppointmentModel {
     this.servicePrice,
     this.celebrityImage,
     this.timeSlotId,
+    this.timeSlot,
     this.celebrityName,
     this.celebrityId,
     this.userId,
@@ -44,6 +46,7 @@ class AppointmentModel {
       celebrityId: json['celebrityId'],
       celebrityImage: json['celebrityImage'],
       timeSlotId: json['timeSlotId'],
+      timeSlot: json['timeSlot'],
       userId: json['userId'],
       userName: json['userName'],
       creationTimestamp: json['creationTimestamp'] != null
@@ -69,6 +72,7 @@ class AppointmentModel {
       'celebrityName': celebrityName,
       'celebrityId': celebrityId,
       'timeSlotId': timeSlotId,
+      'timeSlot': timeSlot,
       'celebrityImage': celebrityImage,
       'userId': userId,
       'userName': userName,

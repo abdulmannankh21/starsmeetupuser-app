@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:intl/intl.dart';
 
 import '../models/appointment_model.dart';
 
@@ -29,6 +30,29 @@ class AppointmentService {
       return [];
     }
   }
+
+  Future<List<AppointmentModel>> getAppointmentsByUserIdAndDate(String userId,) async {
+    try {
+
+      String formattedToday = DateFormat("yyyy-MM-ddTHH:00:00.000").format(DateTime.now());
+
+      DateTime today = DateTime.parse(formattedToday);
+        QuerySnapshot<Map<String, dynamic>> querySnapshot = await _firestore
+            .collection('appointments')
+            .where('userId', isEqualTo: userId)
+            .where('selectedDate', isLessThan: today)
+            .get();
+
+        return querySnapshot.docs
+            .map((doc) => AppointmentModel.fromJson(doc.data()))
+            .toList();
+    } catch (e) {
+      print('Error getting appointments by user ID and date: $e');
+      return [];
+    }
+  }
+
+
 
   Future<List<AppointmentModel>> getAppointmentsByCelebrityId(
       String celebrityId) async {

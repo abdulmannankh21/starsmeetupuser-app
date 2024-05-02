@@ -484,6 +484,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                   EasyLoading.show(status: "Loading...");
                   appointment!.creationTimestamp = DateTime.now();
                   appointment!.promoCode = promoCodeController.text;
+
                   await AppointmentService()
                       .uploadAppointment(appointment!)
                       .then((value) {

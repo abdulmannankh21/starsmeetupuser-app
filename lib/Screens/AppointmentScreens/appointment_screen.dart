@@ -47,6 +47,7 @@ class _AppointmentScreenState extends State<AppointmentScreen>
   ];
   final AppointmentService _appointmentService = AppointmentService();
   late Future<List<AppointmentModel>> futureAppointments;
+  late Future<List<AppointmentModel>> historyAppointments;
 
   Future<List<AppointmentModel>> _loadAppointments() async {
     User? user = FirebaseAuth.instance.currentUser;
@@ -54,12 +55,18 @@ class _AppointmentScreenState extends State<AppointmentScreen>
     return _appointmentService.getAppointmentsByUserId(user!.email!);
 
   }
+  Future<List<AppointmentModel>> _loadHistoryAppointments() async {
+    User? user = FirebaseAuth.instance.currentUser;
+    print(user!.email!);
+    return _appointmentService.getAppointmentsByUserIdAndDate(user!.email!);
 
+  }
   @override
   void initState() {
     super.initState();
     _tabController = TabController(length: 2, vsync: this);
     futureAppointments = _loadAppointments();
+    historyAppointments = _loadHistoryAppointments();
   }
 
   @override
@@ -228,12 +235,42 @@ class _AppointmentScreenState extends State<AppointmentScreen>
                       const SizedBox(
                         height: 20,
                       ),
-                      HistoryAppointmentWidget(
-                        count: 3,
-                        onTap: () {
-                          Navigator.pushNamed(
-                              context, historyAppointmentDetailsScreenRoute);
-                        },
+                      Expanded(
+                        child: FutureBuilder<List<AppointmentModel>>(
+                          future: historyAppointments,
+                          builder: (context, snapshot) {
+                            if (snapshot.connectionState ==
+                                ConnectionState.waiting) {
+                              return Center(child: CircularProgressIndicator());
+                            } else if (snapshot.hasError) {
+                              return Center(
+                                  child: Text('Error: ${snapshot.error}'));
+                            } else {
+                              List<AppointmentModel> appointments =
+                                  snapshot.data ?? [];
+                              print(snapshot.data);
+                              return ListView.builder(
+                                itemCount: appointments.length,
+                                itemBuilder: (context, index) {
+                                  AppointmentModel appointment =
+                                  appointments[index];
+                                  return HistoryAppointmentWidget(
+                                    name: appointment.celebrityName!,
+                                    meetingType: appointment.serviceName!,
+                                    onTap: (){
+                                       Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (context) => UpcomingVideoAppointmentDetailsScreen(appointment: appointment),
+                                        ),
+                                      );                                    },
+                                    // Add other properties as needed
+                                  );
+                                },
+                              );
+                            }
+                          },
+                        ),
                       ),
                     ],
                   ),

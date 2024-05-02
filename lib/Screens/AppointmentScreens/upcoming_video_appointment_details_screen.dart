@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:starsmeetupuser/Utilities/app_routes.dart';
 
 import '../../GlobalWidgets/button_widget.dart';
@@ -78,7 +79,7 @@ class _UpcomingVideoAppointmentDetailsScreenState
             ),
             Center(
               child: Text(
-                "Hamza Ali Abbasi",
+                widget.appointment.celebrityName!,
                 style: twentyTwo700TextStyle(color: purpleColor),
               ),
             ),
@@ -110,15 +111,15 @@ class _UpcomingVideoAppointmentDetailsScreenState
                     style: twentyTwo700TextStyle(color: purpleColor),
                   ),
                   Text(
-                    "Time: 12:10 AM",
+                    "Time: ${DateFormat('hh:mm a').format(widget.appointment.startTime!)}",
                     style: twenty600TextStyle(color: darkGreyColor),
                   ),
                   Text(
-                    "Date: 12-May-2024",
+                    "Date: ${DateFormat('dd-MMM-yyyy').format(widget.appointment.startTime!)}",
                     style: twenty600TextStyle(color: darkGreyColor),
                   ),
                   Text(
-                    "Meeting Type: Video Meeting",
+                    "Meeting Type: ${widget.appointment.serviceName!}",
                     style: twenty600TextStyle(color: darkGreyColor),
                   ),
                 ],
@@ -136,24 +137,22 @@ class _UpcomingVideoAppointmentDetailsScreenState
                     "Payment Details",
                     style: twentyTwo700TextStyle(color: purpleColor),
                   ),
+                  // Text(
+                  //   "Order#124124",
+                  //   style: twenty600TextStyle(color: darkGreyColor),
+                  // ),
+
                   Text(
-                    "Order#124124",
+                    "Paid Amount: Rs. ${widget.appointment.servicePrice!}",
                     style: twenty600TextStyle(color: darkGreyColor),
                   ),
                   Text(
-                    "Meeting Type: Video Meeting",
+                    "Payment Type: ${widget.appointment.paymentMethod != null
+                        ? widget.appointment.paymentMethod! : "Null"}",
                     style: twenty600TextStyle(color: darkGreyColor),
                   ),
                   Text(
-                    "Paid Amount: Rs. 6,000",
-                    style: twenty600TextStyle(color: darkGreyColor),
-                  ),
-                  Text(
-                    "Payment Type: Credit Card",
-                    style: twenty600TextStyle(color: darkGreyColor),
-                  ),
-                  Text(
-                    "Paid on 11th Jan 2023   3:00 PM",
+                    "Paid on  ${DateFormat('dd-MMM-yyyy').format(widget.appointment.selectedDate!)} ",
                     style: twenty600TextStyle(color: darkGreyColor),
                   ),
                 ],
