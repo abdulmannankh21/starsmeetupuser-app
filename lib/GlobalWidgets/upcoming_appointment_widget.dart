@@ -100,13 +100,11 @@ class _UpcomingAppointmentWidgetState
   }
 }
 
-
 class HistoryAppointmentWidget extends StatefulWidget {
-  final String name;
-  final String meetingType;
-  final VoidCallback? onTap;
+  final int count;
+  final VoidCallback onTap;
   const HistoryAppointmentWidget(
-      {super.key, required this.name,  this.onTap, required this.meetingType});
+      {super.key, required this.count, required this.onTap});
 
   @override
   State<HistoryAppointmentWidget> createState() =>
@@ -115,10 +113,17 @@ class HistoryAppointmentWidget extends StatefulWidget {
 
 class _HistoryAppointmentWidgetState extends State<HistoryAppointmentWidget> {
   @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    setState(() {});
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Column(
       children: [
-
+        for (int i = 0; i < widget.count; i++)
           GestureDetector(
             onTap: widget.onTap,
             child: Container(
@@ -159,7 +164,7 @@ class _HistoryAppointmentWidgetState extends State<HistoryAppointmentWidget> {
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
                               Text(
-                                widget.name,
+                                "Faizan Azhar",
                                 style: eighteen700TextStyle(
                                   color: purpleColor,
                                 ),
@@ -170,9 +175,9 @@ class _HistoryAppointmentWidgetState extends State<HistoryAppointmentWidget> {
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
                               Text(
-                                widget.meetingType,
+                                i % 2 == 0 ? "Audio Meeting" : "Video Meeting",
                                 style: fourteen600TextStyle(
-                                  color: greenColor,
+                                  color: i % 2 == 0 ? redColor : greenColor,
                                 ),
                               ),
                             ],

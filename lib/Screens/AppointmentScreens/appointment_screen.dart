@@ -2,7 +2,10 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:starsmeetupuser/Screens/AppointmentScreens/upcoming_audio_appointment_details_screen.dart';
+import 'package:starsmeetupuser/Screens/AppointmentScreens/upcoming_audio_history_detailsScreen.dart';
 import 'package:starsmeetupuser/Screens/AppointmentScreens/upcoming_video_appointment_details_screen.dart';
+import 'package:starsmeetupuser/Screens/AppointmentScreens/upcoming_video_historyScreen.dart';
+import 'package:starsmeetupuser/models/historyModel.dart';
 
 import '../../Apis/appointment_apis.dart';
 import '../../GlobalWidgets/button_widget.dart';
@@ -47,26 +50,40 @@ class _AppointmentScreenState extends State<AppointmentScreen>
   ];
   final AppointmentService _appointmentService = AppointmentService();
   late Future<List<AppointmentModel>> futureAppointments;
-  late Future<List<AppointmentModel>> historyAppointments;
+  Future<List<HistoryModel>>? futureHistory;
+
+  Future<List<HistoryModel>> _loadHistory() async {
+    User? user = FirebaseAuth.instance.currentUser;
+    print(user!.email!);
+    return _appointmentService.getHistory(user!.email!);
+  }
 
   Future<List<AppointmentModel>> _loadAppointments() async {
     User? user = FirebaseAuth.instance.currentUser;
     print(user!.email!);
     return _appointmentService.getAppointmentsByUserId(user!.email!);
-
   }
-  Future<List<AppointmentModel>> _loadHistoryAppointments() async {
+
+  Future<List<AppointmentModel>> _loadAppointmentsThisMonth() async {
     User? user = FirebaseAuth.instance.currentUser;
     print(user!.email!);
-    return _appointmentService.getAppointmentsByUserIdAndDate(user!.email!);
-
+    return _appointmentService
+        .getAppointmentsByUserIdCurrentMonth(user!.email!);
   }
+
+  Future<List<AppointmentModel>> _loadAppointmentsThisYear() async {
+    User? user = FirebaseAuth.instance.currentUser;
+    print(user!.email!);
+    return _appointmentService.getAppointmentsByUserIdwithYear(user!.email!);
+  }
+
   @override
   void initState() {
     super.initState();
     _tabController = TabController(length: 2, vsync: this);
-    futureAppointments = _loadAppointments();
-    historyAppointments = _loadHistoryAppointments();
+    futureAppointments = _loadAppointments().whenComplete(() {
+      futureHistory = _loadHistory();
+    });
   }
 
   @override
@@ -181,9 +198,9 @@ class _AppointmentScreenState extends State<AppointmentScreen>
               child: TabBarView(
                 controller: _tabController,
                 children: [
-                   Column(
+                  //this is 1st Tab of Tabbar
+                  Column(
                     children: [
-
                       Expanded(
                         child: FutureBuilder<List<AppointmentModel>>(
                           future: futureAppointments,
@@ -194,6 +211,10 @@ class _AppointmentScreenState extends State<AppointmentScreen>
                             } else if (snapshot.hasError) {
                               return Center(
                                   child: Text('Error: ${snapshot.error}'));
+                            } else if (snapshot.data!.length == 0) {
+                              return Center(
+                                  child: Text(
+                                      'There is no Appointment Avaiable!'));
                             } else {
                               List<AppointmentModel> appointments =
                                   snapshot.data ?? [];
@@ -206,20 +227,28 @@ class _AppointmentScreenState extends State<AppointmentScreen>
                                   return UpcomingAppointmentWidget(
                                     name: appointment.celebrityName!,
                                     meetingType: appointment.serviceName!,
-                                    onTap: (){
-                                      appointment.serviceName! != "Video Meeting"
-?
-                                      Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                          builder: (context) => UpcomingAudioAppointmentDetailsScreen(appointment: appointment),
-                                        ),
-                                      ) : Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                          builder: (context) => UpcomingVideoAppointmentDetailsScreen(appointment: appointment),
-                                        ),
-                                      );                                    },
+                                    onTap: () {
+                                      appointment.serviceName! !=
+                                              "Video Meeting"
+                                          ? Navigator.push(
+                                              context,
+                                              MaterialPageRoute(
+                                                builder: (context) =>
+                                                    UpcomingAudioAppointmentDetailsScreen(
+                                                        appointment:
+                                                            appointment),
+                                              ),
+                                            )
+                                          : Navigator.push(
+                                              context,
+                                              MaterialPageRoute(
+                                                builder: (context) =>
+                                                    UpcomingVideoAppointmentDetailsScreen(
+                                                        appointment:
+                                                            appointment),
+                                              ),
+                                            );
+                                    },
                                     // Add other properties as needed
                                   );
                                 },
@@ -230,14 +259,12 @@ class _AppointmentScreenState extends State<AppointmentScreen>
                       )
                     ],
                   ),
+                  // this is the 2nd index of Tabbar
                   Column(
                     children: [
-                      const SizedBox(
-                        height: 20,
-                      ),
                       Expanded(
-                        child: FutureBuilder<List<AppointmentModel>>(
-                          future: historyAppointments,
+                        child: FutureBuilder<List<HistoryModel>>(
+                          future: futureHistory,
                           builder: (context, snapshot) {
                             if (snapshot.connectionState ==
                                 ConnectionState.waiting) {
@@ -245,25 +272,42 @@ class _AppointmentScreenState extends State<AppointmentScreen>
                             } else if (snapshot.hasError) {
                               return Center(
                                   child: Text('Error: ${snapshot.error}'));
+                            } else if (snapshot.data!.length == 0) {
+                              return Center(
+                                  child: Text(
+                                      'There is no Appointment Avaiable!'));
                             } else {
-                              List<AppointmentModel> appointments =
+                              List<HistoryModel> appointments =
                                   snapshot.data ?? [];
                               print(snapshot.data);
                               return ListView.builder(
                                 itemCount: appointments.length,
                                 itemBuilder: (context, index) {
-                                  AppointmentModel appointment =
-                                  appointments[index];
-                                  return HistoryAppointmentWidget(
+                                  HistoryModel appointment =
+                                      appointments[index];
+                                  return UpcomingAppointmentWidget(
                                     name: appointment.celebrityName!,
                                     meetingType: appointment.serviceName!,
-                                    onTap: (){
-                                       Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                          builder: (context) => UpcomingVideoAppointmentDetailsScreen(appointment: appointment),
-                                        ),
-                                      );                                    },
+                                    onTap: () {
+                                      appointment.serviceName! !=
+                                              "Video Meeting"
+                                          ? Navigator.push(
+                                              context,
+                                              MaterialPageRoute(
+                                                builder: (context) =>
+                                                    UpComingAudioDetailsScreen(
+                                                        history: appointment),
+                                              ),
+                                            )
+                                          : Navigator.push(
+                                              context,
+                                              MaterialPageRoute(
+                                                builder: (context) =>
+                                                    UpcomingVideoHistoryScreen(
+                                                        history: appointment),
+                                              ),
+                                            );
+                                    },
                                     // Add other properties as needed
                                   );
                                 },
@@ -271,7 +315,7 @@ class _AppointmentScreenState extends State<AppointmentScreen>
                             }
                           },
                         ),
-                      ),
+                      )
                     ],
                   ),
                 ],
@@ -281,6 +325,21 @@ class _AppointmentScreenState extends State<AppointmentScreen>
         ),
       ),
     );
+  }
+
+  void _handleApplyButtonTap() {
+    setState(() {
+      if (upcomingSelectedDays == "This month") {
+        print("this is upcoming days: ${upcomingSelectedDays}");
+        futureAppointments = _loadAppointmentsThisMonth();
+      } else if (upcomingSelectedDays == "All") {
+        futureAppointments = _loadAppointments();
+      } else if (upcomingSelectedDays == "This year") {
+        print("this is upcoming days: ${upcomingSelectedDays}");
+        futureAppointments = _loadAppointmentsThisYear();
+      }
+      Navigator.pop(context);
+    });
   }
 
   showUpcomingPopUp(pageContext) {
@@ -384,9 +443,7 @@ class _AppointmentScreenState extends State<AppointmentScreen>
                               height: 45,
                               color: purpleColor,
                               text: "Apply",
-                              onTap: () {
-                                Navigator.pop(pageContext);
-                              },
+                              onTap: _handleApplyButtonTap,
                               borderRadius: 5.0,
                               textStyle:
                                   eighteen700TextStyle(color: Colors.white),

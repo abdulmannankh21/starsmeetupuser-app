@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 import 'package:starsmeetupuser/Utilities/app_routes.dart';
 import 'package:starsmeetupuser/models/appointment_model.dart';
 
-import '../../Constants/app_constants.dart';
 import '../../GlobalWidgets/button_widget.dart';
 import '../../Utilities/app_colors.dart';
 import '../../Utilities/app_text_styles.dart';
@@ -21,7 +19,6 @@ class UpcomingAudioAppointmentDetailsScreen extends StatefulWidget {
 class _UpcomingAudioAppointmentDetailsScreenState
     extends State<UpcomingAudioAppointmentDetailsScreen> {
   bool value = true;
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -81,7 +78,7 @@ class _UpcomingAudioAppointmentDetailsScreenState
             ),
             Center(
               child: Text(
-                widget.appointment.celebrityName!,
+                "Hamza Ali Abbasi",
                 style: twentyTwo700TextStyle(color: purpleColor),
               ),
             ),
@@ -113,15 +110,15 @@ class _UpcomingAudioAppointmentDetailsScreenState
                     style: twentyTwo700TextStyle(color: purpleColor),
                   ),
                   Text(
-                    "Time: ${DateFormat('hh:mm a').format(widget.appointment.startTime!)}",
+                    "Time: 12:10 AM",
                     style: twenty600TextStyle(color: darkGreyColor),
                   ),
                   Text(
-                    "Date: ${DateFormat('dd-MMM-yyyy').format(widget.appointment.startTime!)}",
+                    "Date: 12-May-2024",
                     style: twenty600TextStyle(color: darkGreyColor),
                   ),
                   Text(
-                    "Meeting Type: ${widget.appointment.serviceName!}",
+                    "Meeting Type: Audio Meeting",
                     style: twenty600TextStyle(color: darkGreyColor),
                   ),
                 ],
@@ -139,20 +136,20 @@ class _UpcomingAudioAppointmentDetailsScreenState
                     "Payment Details",
                     style: twentyTwo700TextStyle(color: purpleColor),
                   ),
-                  // Text(
-                  //   "Order#124124",
-                  //   style: twenty600TextStyle(color: darkGreyColor),
-                  // ),
                   Text(
-                    "Paid Amount: Rs. ${widget.appointment.servicePrice!}",
+                    "Order#124124",
                     style: twenty600TextStyle(color: darkGreyColor),
                   ),
                   Text(
-                    "Payment Type: ${widget.appointment.paymentMethod != null ? widget.appointment.paymentMethod! : "Null"}",
+                    "Paid Amount: Rs. 6,000",
                     style: twenty600TextStyle(color: darkGreyColor),
                   ),
                   Text(
-                    "Paid on  ${DateFormat('dd-MMM-yyyy').format(widget.appointment.selectedDate!)} ",
+                    "Payment Type: Credit Card",
+                    style: twenty600TextStyle(color: darkGreyColor),
+                  ),
+                  Text(
+                    "Paid on 11th Jan 2023   3:00 PM",
                     style: twenty600TextStyle(color: darkGreyColor),
                   ),
                 ],

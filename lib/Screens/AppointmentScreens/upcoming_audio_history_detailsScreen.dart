@@ -1,24 +1,23 @@
 import 'package:flutter/material.dart';
+import 'package:starsmeetupuser/GlobalWidgets/button_widget.dart';
+import 'package:starsmeetupuser/Utilities/app_colors.dart';
 import 'package:starsmeetupuser/Utilities/app_routes.dart';
+import 'package:starsmeetupuser/Utilities/app_text_styles.dart';
+import 'package:starsmeetupuser/models/appointment_model.dart';
+import 'package:starsmeetupuser/models/historyModel.dart';
 
-import '../../GlobalWidgets/button_widget.dart';
-import '../../Utilities/app_colors.dart';
-import '../../Utilities/app_text_styles.dart';
-import '../../models/appointment_model.dart';
-
-class UpcomingVideoAppointmentDetailsScreen extends StatefulWidget {
-  AppointmentModel appointment = AppointmentModel();
-
-   UpcomingVideoAppointmentDetailsScreen({required this.appointment,super.key});
+class UpComingAudioDetailsScreen extends StatefulWidget {
+  HistoryModel history = HistoryModel();
+  UpComingAudioDetailsScreen({super.key, required this.history});
 
   @override
-  State<UpcomingVideoAppointmentDetailsScreen> createState() =>
-      _UpcomingVideoAppointmentDetailsScreenState();
+  State<UpComingAudioDetailsScreen> createState() =>
+      _UpComingAudioDetailsScreenState();
 }
 
-class _UpcomingVideoAppointmentDetailsScreenState
-    extends State<UpcomingVideoAppointmentDetailsScreen> {
-  bool value = true;
+class _UpComingAudioDetailsScreenState
+    extends State<UpComingAudioDetailsScreen> {
+   bool value = true;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -92,7 +91,7 @@ class _UpcomingVideoAppointmentDetailsScreenState
                 color: purpleColor,
                 text: "Join Meeting",
                 onTap: () {
-                  Navigator.pushNamed(context, videoCallingScreenRoute);
+                  Navigator.pushNamed(context, audioCallingScreenRoute);
                 },
                 textStyle: twentyTwo700TextStyle(color: Colors.white),
               ),
@@ -118,7 +117,7 @@ class _UpcomingVideoAppointmentDetailsScreenState
                     style: twenty600TextStyle(color: darkGreyColor),
                   ),
                   Text(
-                    "Meeting Type: Video Meeting",
+                    "Meeting Type: Audio Meeting",
                     style: twenty600TextStyle(color: darkGreyColor),
                   ),
                 ],
@@ -138,10 +137,6 @@ class _UpcomingVideoAppointmentDetailsScreenState
                   ),
                   Text(
                     "Order#124124",
-                    style: twenty600TextStyle(color: darkGreyColor),
-                  ),
-                  Text(
-                    "Meeting Type: Video Meeting",
                     style: twenty600TextStyle(color: darkGreyColor),
                   ),
                   Text(
@@ -202,4 +197,5 @@ class _UpcomingVideoAppointmentDetailsScreenState
       ),
     );
   }
+
 }

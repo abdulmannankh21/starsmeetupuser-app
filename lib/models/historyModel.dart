@@ -1,4 +1,4 @@
-class AppointmentModel {
+class HistoryModel {
   String? serviceDuration;
   String? serviceName;
   String? servicePrice;
@@ -16,7 +16,7 @@ class AppointmentModel {
   double? supportYourStarCharges;
   String? paymentMethod;
 
-  AppointmentModel({
+  HistoryModel({
     this.serviceDuration,
     this.serviceName,
     this.servicePrice,
@@ -35,8 +35,8 @@ class AppointmentModel {
     this.paymentMethod,
   });
 
-  factory AppointmentModel.fromJson(Map<String, dynamic> json) {
-    return AppointmentModel(
+  factory HistoryModel.fromJson(Map<String, dynamic> json) {
+    return HistoryModel(
       serviceDuration: json['serviceTitle'],
       serviceName: json['serviceName'],
       servicePrice: json['servicePrice'],
