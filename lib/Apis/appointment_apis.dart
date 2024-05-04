@@ -86,7 +86,7 @@ class AppointmentService {
           .where('userId', isEqualTo: userId)
           .get();
 
-      List<AppointmentModel> appointments = querySnapshot.docs
+      List< AppointmentModel> appointments = querySnapshot.docs
           .map((doc) => AppointmentModel.fromJson(doc.data()))
           .where((appointment) {
         // Parse creationTimestamp string to DateTime object
