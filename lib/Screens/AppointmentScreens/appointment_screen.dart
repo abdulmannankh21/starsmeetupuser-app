@@ -1,5 +1,6 @@
 import 'dart:developer';
 
+import 'package:calender_picker/calender_picker.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -53,6 +54,7 @@ class _AppointmentScreenState extends State<AppointmentScreen>
     'This year',
     'Custom',
   ];
+  DateTime _selectedValue = DateTime.now();
   final AppointmentService _appointmentService = AppointmentService();
   late Future<List<AppointmentModel>> futureAppointments;
   Future<List<HistoryModel>>? futureHistory;
@@ -355,8 +357,43 @@ class _AppointmentScreenState extends State<AppointmentScreen>
       } else if (historySelectedDays == "This year") {
         print("this is upcoming days: ${upcomingSelectedDays}");
         futureHistory = _loadHistoryThisYear();
+      } else if (historySelectedDays == "Custom") {
+        log("i am here");
+        datePickerDialog();
+        // pageBuilder: (_, __, ___) {
+        //   return StatefulBuilder(builder: (context, setState) {
+        //     return Center()}})
       }
       Navigator.pop(context);
+    });
+  }
+
+  datePickerDialog() {
+    setState(() {
+      showGeneralDialog(
+          context: context,
+          barrierLabel: "Barrier",
+          transitionDuration: const Duration(seconds: 0),
+          barrierDismissible: true,
+          pageBuilder: (context, animation, secondaryAnimation) {
+            return StatefulBuilder(builder: (context, setState) {
+              return Center(
+                child: CalenderPicker(
+                  DateTime.now(),
+                  initialSelectedDate: DateTime.now(),
+                  selectionColor: Colors.black,
+                  selectedTextColor: Colors.white,
+                  onDateChange: (date) {
+                    // New date selected
+                    setState(() {
+                      _selectedValue = date;
+                      log("this is date: ${_selectedValue}");
+                    });
+                  },
+                ),
+              );
+            });
+          });
     });
   }
 
