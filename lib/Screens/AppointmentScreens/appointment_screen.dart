@@ -1,6 +1,10 @@
+import 'dart:developer';
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:get/instance_manager.dart';
+import 'package:starsmeetupuser/Apis/historyyController.dart';
 import 'package:starsmeetupuser/Screens/AppointmentScreens/upcoming_audio_appointment_details_screen.dart';
 import 'package:starsmeetupuser/Screens/AppointmentScreens/upcoming_audio_history_detailsScreen.dart';
 import 'package:starsmeetupuser/Screens/AppointmentScreens/upcoming_video_appointment_details_screen.dart';
@@ -25,6 +29,7 @@ class AppointmentScreen extends StatefulWidget {
 class _AppointmentScreenState extends State<AppointmentScreen>
     with SingleTickerProviderStateMixin {
   late TabController _tabController;
+  var _controller = Get.put(HistoryController());
   int currentTabIndex = 0;
   String upcomingSelectedDays = 'All';
   String historySelectedStatus = 'All';
@@ -69,6 +74,18 @@ class _AppointmentScreenState extends State<AppointmentScreen>
     print(user!.email!);
     return _appointmentService
         .getAppointmentsByUserIdCurrentMonth(user!.email!);
+  }
+
+  Future<List<HistoryModel>> _loadhistoryThisMonth() async {
+    User? user = FirebaseAuth.instance.currentUser;
+    print(user!.email!);
+    return _controller.getAppointmentsByUserIdCurrentMonth(user!.email!);
+  }
+
+  Future<List<HistoryModel>> _loadHistoryThisYear() async {
+    User? user = FirebaseAuth.instance.currentUser;
+    print(user!.email!);
+    return _controller.getAppointmentsByUserIdwithYear(user!.email!);
   }
 
   Future<List<AppointmentModel>> _loadAppointmentsThisYear() async {
@@ -325,6 +342,22 @@ class _AppointmentScreenState extends State<AppointmentScreen>
         ),
       ),
     );
+  }
+
+  void _handleApplyButtonTaponHistory() {
+    setState(() {
+      log("this is upcoming days: ${historySelectedDays}");
+      if (historySelectedDays == "This month") {
+        print("this is upcoming days: ${upcomingSelectedDays}");
+        futureHistory = _loadhistoryThisMonth();
+      } else if (historySelectedDays == "All") {
+        futureHistory = _loadHistory();
+      } else if (historySelectedDays == "This year") {
+        print("this is upcoming days: ${upcomingSelectedDays}");
+        futureHistory = _loadHistoryThisYear();
+      }
+      Navigator.pop(context);
+    });
   }
 
   void _handleApplyButtonTap() {
@@ -608,9 +641,7 @@ class _AppointmentScreenState extends State<AppointmentScreen>
                               height: 45,
                               color: purpleColor,
                               text: "Apply",
-                              onTap: () {
-                                Navigator.pop(pageContext);
-                              },
+                              onTap: _handleApplyButtonTaponHistory,
                               borderRadius: 5.0,
                               textStyle:
                                   eighteen700TextStyle(color: Colors.white),
