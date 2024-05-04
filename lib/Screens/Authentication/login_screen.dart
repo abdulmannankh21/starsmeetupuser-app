@@ -1,10 +1,14 @@
 // ignore_for_file: use_build_context_synchronously
 
+import 'dart:developer';
+
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:starsmeetupuser/Apis/authentication_apis.dart';
 
 import '../../Apis/auth_controller.dart';
 import '../../Apis/user_apis.dart';
@@ -32,11 +36,41 @@ class _LoginScreenState extends State<LoginScreen> {
   bool obscureText = true;
   final GlobalKey<FormState> emailKey = GlobalKey<FormState>();
   final GlobalKey<FormState> passwordKey = GlobalKey<FormState>();
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+
+    log("FCM Token:");
+    getFCMToken();
+    setState(() {});
+  }
 
   @override
   void dispose() {
     EasyLoading.dismiss();
     super.dispose();
+  }
+
+  Future<void> getFCMToken() async {
+    // Request permission
+    NotificationSettings settings =
+        await FirebaseMessaging.instance.requestPermission(
+      alert: true,
+      badge: true,
+      sound: true,
+    );
+
+    if (settings.authorizationStatus == AuthorizationStatus.authorized) {
+      // Get the token
+      String? token = await FirebaseMessaging.instance.getToken();
+      log("FCM Token: $token");
+
+      MyPreferences.instance.setToken(token: token);
+    } else {
+      log('User declined or has not yet granted permission.');
+    }
+    setState(() {});
   }
 
   @override
@@ -225,7 +259,7 @@ class _LoginScreenState extends State<LoginScreen> {
     );
   }
 
-  void onTapSignIn() {
+  Future<void> onTapSignIn() async {
     if (!emailKey.currentState!.validate()) return;
     if (!passwordKey.currentState!.validate()) return;
     formKey.currentState!.save();
@@ -233,37 +267,50 @@ class _LoginScreenState extends State<LoginScreen> {
       print(emailController.text.trim().toLowerCase());
     }
     EasyLoading.show(status: "Loading...\nPlease Wait");
-    Authentication()
-        .signIn(
-            email: emailController.text.trim().toLowerCase(),
-            password: passwordController.text.toString())
-        .then((result) async {
-      if (result == null) {
-        EasyLoading.dismiss();
+    await AuthenticationService()
+        .getUser(emailController.text.trim().toLowerCase())
+        .then((value) async {
+      final token = MyPreferences.instance.getToken();
+      if (value["token"] == token) {
+        log("token get successfully");
+        await Authentication()
+            .signIn(
+                email: emailController.text.trim().toLowerCase(),
+                password: passwordController.text.toString())
+            .then((result) async {
+          // log("this is result|: ${result!.displayName}");
+          if (result == null) {
+            EasyLoading.dismiss();
 
-        UserModel? user = await UserService()
-            .getUser(emailController.text.trim().toLowerCase());
-        if (user != null) {
-          MyPreferences.instance.setUser(user: user);
-          EasyLoading.showSuccess("Log In Successful");
-          Navigator.pushNamedAndRemoveUntil(
-              context, homeScreenRoute, (route) => true,
-              arguments: true);
-        } else {
-          Fluttertoast.showToast(
-              msg: "Something went wrong!",
-              toastLength: Toast.LENGTH_LONG,
-              gravity: ToastGravity.BOTTOM,
-              timeInSecForIosWeb: 2,
-              backgroundColor: redColor,
-              textColor: Colors.white,
-              fontSize: 16.0);
-        }
+            UserModel? user = await UserService()
+                .getUser(emailController.text.trim().toLowerCase());
+            if (user != null) {
+              MyPreferences.instance.setUser(user: user);
+              EasyLoading.showSuccess("Log In Successful");
+              Navigator.pushNamedAndRemoveUntil(
+                  context, homeScreenRoute, (route) => true,
+                  arguments: true);
+            } else {
+              Fluttertoast.showToast(
+                  msg: "Something went wrong!",
+                  toastLength: Toast.LENGTH_LONG,
+                  gravity: ToastGravity.BOTTOM,
+                  timeInSecForIosWeb: 2,
+                  backgroundColor: redColor,
+                  textColor: Colors.white,
+                  fontSize: 16.0);
+            }
+          } else {
+            if (kDebugMode) {
+              print('User does not exist.');
+            }
+            EasyLoading.dismiss();
+          }
+        });
+      } else if (token == null) {
+        getFCMToken();
       } else {
-        if (kDebugMode) {
-          print('User does not exist.');
-        }
-        EasyLoading.dismiss();
+        EasyLoading.showSuccess("You are Already Login another Device");
       }
     });
   }

@@ -10,20 +10,21 @@ class UserModel {
   String? status;
   String? profilePicture;
   String? backgroundPicture;
+  String? token;
 
-  UserModel({
-    this.userID,
-    this.name,
-    this.email,
-    this.phoneNumber,
-    this.password,
-    this.bio,
-    this.createdAt,
-    this.updatedAt,
-    this.status,
-    this.profilePicture,
-    this.backgroundPicture,
-  });
+  UserModel(
+      {this.userID,
+      this.name,
+      this.email,
+      this.phoneNumber,
+      this.password,
+      this.bio,
+      this.createdAt,
+      this.updatedAt,
+      this.status,
+      this.profilePicture,
+      this.backgroundPicture,
+      this.token});
 
   UserModel.fromJson(Map<String, dynamic> json) {
     userID = json['UserID'];
@@ -37,6 +38,7 @@ class UserModel {
     status = json['Status'];
     profilePicture = json['profilePicture'];
     backgroundPicture = json['backgroundPicture'];
+    token = json['token'];
   }
 
   Map<String, dynamic> toJson() {
@@ -52,6 +54,7 @@ class UserModel {
     data['bio'] = bio;
     data['profilePicture'] = profilePicture;
     data['backgroundPicture'] = backgroundPicture;
+    data['token'] = token;
 
     return data;
   }

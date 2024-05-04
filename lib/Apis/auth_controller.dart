@@ -1,3 +1,4 @@
+import 'dart:developer';
 import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -47,6 +48,7 @@ class Authentication {
       );
 
       final currentUser = userCredential.user;
+      log("this is sigIn method: ${currentUser}");
       // if (currentUser != null) {
       //   // Check if user is already logged in on another device
       //   final isAlreadyLoggedIn =

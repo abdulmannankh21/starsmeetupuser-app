@@ -1,8 +1,11 @@
+import 'dart:developer';
+
 import 'package:country_picker/country_picker.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
+import 'package:starsmeetupuser/LocalStorage/shared_preferences.dart';
 import 'package:starsmeetupuser/Utilities/app_routes.dart';
 
 import '../../Apis/auth_controller.dart';
@@ -359,6 +362,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
       );
 
       if (result == null) {
+        final token = MyPreferences.instance.getToken();
+        log("this is pref token:${token}");
         await AuthenticationService().uploadUser(
           UserModel(
             name: nameController.text,
@@ -371,6 +376,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
             profilePicture: null,
             updatedAt: null,
             userID: emailController.text.trim().toLowerCase(),
+            token: token.toString(),
           ),
         );
 

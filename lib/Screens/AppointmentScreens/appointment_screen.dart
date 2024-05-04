@@ -1,6 +1,5 @@
 import 'dart:developer';
 
-import 'package:calender_picker/calender_picker.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -35,6 +34,7 @@ class _AppointmentScreenState extends State<AppointmentScreen>
   String upcomingSelectedDays = 'All';
   String historySelectedStatus = 'All';
   String historySelectedDays = 'All';
+  DateTime _selectedDate = DateTime.now();
 
   final List<String> historyStatus = [
     'All',
@@ -63,6 +63,12 @@ class _AppointmentScreenState extends State<AppointmentScreen>
     User? user = FirebaseAuth.instance.currentUser;
     print(user!.email!);
     return _appointmentService.getHistory(user!.email!);
+  }
+
+  Future<List<HistoryModel>> _loadHistoryeithCustom(String pickedDate) async {
+    User? user = FirebaseAuth.instance.currentUser;
+    print(user!.email!);
+    return _controller.getHistoryByUserIdCustomdate(user!.email!, pickedDate);
   }
 
   Future<List<AppointmentModel>> _loadAppointments() async {
@@ -359,7 +365,6 @@ class _AppointmentScreenState extends State<AppointmentScreen>
         futureHistory = _loadHistoryThisYear();
       } else if (historySelectedDays == "Custom") {
         log("i am here");
-        datePickerDialog();
         // pageBuilder: (_, __, ___) {
         //   return StatefulBuilder(builder: (context, setState) {
         //     return Center()}})
@@ -370,30 +375,30 @@ class _AppointmentScreenState extends State<AppointmentScreen>
 
   datePickerDialog() {
     setState(() {
-      showGeneralDialog(
-          context: context,
-          barrierLabel: "Barrier",
-          transitionDuration: const Duration(seconds: 0),
-          barrierDismissible: true,
-          pageBuilder: (context, animation, secondaryAnimation) {
-            return StatefulBuilder(builder: (context, setState) {
-              return Center(
-                child: CalenderPicker(
-                  DateTime.now(),
-                  initialSelectedDate: DateTime.now(),
-                  selectionColor: Colors.black,
-                  selectedTextColor: Colors.white,
-                  onDateChange: (date) {
-                    // New date selected
-                    setState(() {
-                      _selectedValue = date;
-                      log("this is date: ${_selectedValue}");
-                    });
-                  },
-                ),
-              );
-            });
-          });
+      //   showGeneralDialog(
+      //       context: context,
+      //       barrierLabel: "Barrier",
+      //       transitionDuration: const Duration(seconds: 0),
+      //       barrierDismissible: true,
+      //       pageBuilder: (context, animation, secondaryAnimation) {
+      //         return StatefulBuilder(builder: (context, setState) {
+      //           return Container(
+      //             child: CalenderPicker(
+      //               DateTime.now(),
+      //               initialSelectedDate: DateTime.now(),
+      //               selectionColor: Colors.black,
+      //               selectedTextColor: Colors.white,
+      //               onDateChange: (date) {
+      //                 // New date selected
+      //                 setState(() {
+      //                   _selectedValue = date;
+      //                   log("this is date: ${_selectedValue}");
+      //                 });
+      //               },
+      //             ),
+      //           );
+      //         });
+      //       });
     });
   }
 
@@ -475,6 +480,9 @@ class _AppointmentScreenState extends State<AppointmentScreen>
                             onChanged: (String? newValue) {
                               setState(() {
                                 upcomingSelectedDays = newValue!;
+                                if (upcomingSelectedDays == "Custom") {
+                                  _selectDate(context);
+                                }
                               });
                             },
                             items: upcomingDays
@@ -640,6 +648,9 @@ class _AppointmentScreenState extends State<AppointmentScreen>
                             onChanged: (String? newValue) {
                               setState(() {
                                 historySelectedDays = newValue!;
+                                if (historySelectedDays == "Custom") {
+                                  _selectDate(context);
+                                }
                               });
                             },
                             items: historyDays
@@ -695,5 +706,21 @@ class _AppointmentScreenState extends State<AppointmentScreen>
         });
       },
     );
+  }
+
+  Future<void> _selectDate(BuildContext context) async {
+    final DateTime? picked = await showDatePicker(
+      context: context,
+      initialDate: DateTime.now(),
+      firstDate: DateTime(2000),
+      lastDate: DateTime(2101),
+    );
+    if (picked != null && picked != _selectedDate) {
+      setState(() {
+        _selectedDate = picked;
+        log("this is selected date: ${_selectedDate}");
+        // futureHistory = _loadHistoryeithCustom(_selectedDate.toString());
+      });
+    }
   }
 }

@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/foundation.dart';
 
@@ -19,6 +21,20 @@ class AuthenticationService {
     }
   }
 
+  Future getUser(String email) async {
+    try {
+      var result = await _firestore.collection('users').doc(email).get();
+      log("this is user data: ${result.data()}");
+      if (kDebugMode) {
+        print('User data uploaded successfully!');
+        return result.data();
+      }
+    } catch (e) {
+      if (kDebugMode) {
+        print('Error uploading user data: $e');
+      }
+    }
+  }
 
   Future<void> deleteUserAndData(String userId) async {
     try {
@@ -33,5 +49,4 @@ class AuthenticationService {
       }
     }
   }
-
 }
