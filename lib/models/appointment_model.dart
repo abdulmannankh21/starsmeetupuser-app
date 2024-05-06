@@ -7,7 +7,7 @@ class AppointmentModel {
   String? celebrityImage;
   String? userId;
   String? userName;
-  DateTime? creationTimestamp;
+  String? creationTimestamp;
   DateTime? startTime;
   DateTime? endTime;
   DateTime? selectedDate;
@@ -46,9 +46,8 @@ class AppointmentModel {
       timeSlotId: json['timeSlotId'],
       userId: json['userId'],
       userName: json['userName'],
-      creationTimestamp: json['creationTimestamp'] != null
-          ? DateTime.parse(json['creationTimestamp'])
-          : null,
+      creationTimestamp:
+          json['creationTimestamp'] != null ? json['creationTimestamp'] : null,
       startTime:
           json['startTime'] != null ? DateTime.parse(json['startTime']) : null,
       endTime: json['endTime'] != null ? DateTime.parse(json['endTime']) : null,
@@ -72,7 +71,7 @@ class AppointmentModel {
       'celebrityImage': celebrityImage,
       'userId': userId,
       'userName': userName,
-      'creationTimestamp': creationTimestamp?.toIso8601String(),
+      'creationTimestamp': creationTimestamp,
       'startTime': startTime?.toIso8601String(),
       'endTime': endTime?.toIso8601String(),
       'selectedDate': selectedDate?.toIso8601String(),

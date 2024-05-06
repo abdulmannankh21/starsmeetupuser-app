@@ -3,7 +3,9 @@ import 'dart:developer';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:get/instance_manager.dart';
+import 'package:intl/intl.dart';
 import 'package:starsmeetupuser/Apis/historyyController.dart';
 import 'package:starsmeetupuser/Screens/AppointmentScreens/upcoming_audio_appointment_details_screen.dart';
 import 'package:starsmeetupuser/Screens/AppointmentScreens/upcoming_audio_history_detailsScreen.dart';
@@ -69,6 +71,14 @@ class _AppointmentScreenState extends State<AppointmentScreen>
     User? user = FirebaseAuth.instance.currentUser;
     print(user!.email!);
     return _controller.getHistoryByUserIdCustomdate(user!.email!, pickedDate);
+  }
+
+  Future<List<AppointmentModel>> _loadAppointmentWithCustom(
+      String pickedDate) async {
+    User? user = FirebaseAuth.instance.currentUser;
+    print(user!.email!);
+    return _appointmentService.getAppointmentsWithCustomdate(
+        user!.email!, pickedDate);
   }
 
   Future<List<AppointmentModel>> _loadAppointments() async {
@@ -481,7 +491,7 @@ class _AppointmentScreenState extends State<AppointmentScreen>
                               setState(() {
                                 upcomingSelectedDays = newValue!;
                                 if (upcomingSelectedDays == "Custom") {
-                                  _selectDate(context);
+                                  _selectDate(context, "upComing");
                                 }
                               });
                             },
@@ -649,7 +659,7 @@ class _AppointmentScreenState extends State<AppointmentScreen>
                               setState(() {
                                 historySelectedDays = newValue!;
                                 if (historySelectedDays == "Custom") {
-                                  _selectDate(context);
+                                  _selectDate(context, "history");
                                 }
                               });
                             },
@@ -708,7 +718,7 @@ class _AppointmentScreenState extends State<AppointmentScreen>
     );
   }
 
-  Future<void> _selectDate(BuildContext context) async {
+  Future<void> _selectDate(BuildContext context, String type) async {
     final DateTime? picked = await showDatePicker(
       context: context,
       initialDate: DateTime.now(),
@@ -718,8 +728,16 @@ class _AppointmentScreenState extends State<AppointmentScreen>
     if (picked != null && picked != _selectedDate) {
       setState(() {
         _selectedDate = picked;
-        log("this is selected date: ${_selectedDate}");
-        // futureHistory = _loadHistoryeithCustom(_selectedDate.toString());
+        log("this is selected date: ${DateFormat('yyyy-MM-dd').format(_selectedDate)}");
+        if (type == "upComing") {
+          futureAppointments = _loadAppointmentWithCustom(
+              DateFormat('yyyy-MM-dd').format(_selectedDate).toString());
+          Get.back();
+        } else {
+          log("i am inside of history");
+          futureHistory = _loadHistoryeithCustom(
+              DateFormat('yyyy-MM-dd').format(_selectedDate).toString());
+        }
       });
     }
   }

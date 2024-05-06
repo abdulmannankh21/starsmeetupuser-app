@@ -86,7 +86,7 @@ class AppointmentService {
           .where('userId', isEqualTo: userId)
           .get();
 
-      List< AppointmentModel> appointments = querySnapshot.docs
+      List<AppointmentModel> appointments = querySnapshot.docs
           .map((doc) => AppointmentModel.fromJson(doc.data()))
           .where((appointment) {
         // Parse creationTimestamp string to DateTime object
@@ -154,6 +154,44 @@ class AppointmentService {
       // Print data from each document
       appointments.forEach((appointment) {
         print("this is result ${appointment.toJson()}");
+      });
+
+      return appointments;
+    } catch (e) {
+      print('Error getting appointments by user ID: $e');
+      // Handle error accordingly
+      return [];
+    }
+  }
+
+  Future<List<AppointmentModel>> getAppointmentsWithCustomdate(
+      String userId, String date) async {
+    try {
+      // Parse the date string into a DateTime object // Parse the date string into a DateTime object
+
+      // Define the start and end of the selected date
+      // DateTime startOfDay =
+      //     DateTime(selectedDate.year, selectedDate.month, selectedDate.day);
+      // DateTime endOfDay = startOfDay.add(Duration(days: 1));
+
+      QuerySnapshot<Map<String, dynamic>> querySnapshot = await _firestore
+          .collection('appointments')
+          .where('userId', isEqualTo: userId)
+          .where('creationTimestamp', isEqualTo: date)
+          // .where('creationTimestamp', isLessThan: endOfDay)
+          .get();
+
+      List<AppointmentModel> appointments = querySnapshot.docs
+          .map((doc) => AppointmentModel.fromJson(doc.data()))
+          .toList();
+
+      log("Appointments for user ID $userId for date $date: ${appointments.length}");
+
+      // Check if creationTimestamp is within the current month
+
+      // Print data from each document
+      appointments.forEach((appointment) {
+        print("This is result ${appointment.toJson()}");
       });
 
       return appointments;

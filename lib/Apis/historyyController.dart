@@ -1,6 +1,7 @@
 import 'dart:developer';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:get/get.dart';
 import 'package:get/get_state_manager/src/simple/get_controllers.dart';
 import 'package:intl/intl.dart';
 import 'package:starsmeetupuser/models/historyModel.dart';
@@ -95,6 +96,7 @@ class HistoryController extends GetxController {
           .where('userId', isEqualTo: userId)
           .get();
       log("i am here: ${querySnapshot.docs.length}");
+
       return querySnapshot.docs
           .map((doc) => HistoryModel.fromJson(doc.data()))
           .toList();
@@ -109,18 +111,17 @@ class HistoryController extends GetxController {
       String userId, String date) async {
     try {
       // Parse the date string into a DateTime object // Parse the date string into a DateTime object
-      DateTime selectedDate = DateFormat("yyyy-MM-dd").parse(date);
 
       // Define the start and end of the selected date
-      DateTime startOfDay =
-          DateTime(selectedDate.year, selectedDate.month, selectedDate.day);
-      DateTime endOfDay = startOfDay.add(Duration(days: 1));
+      // DateTime startOfDay =
+      //     DateTime(selectedDate.year, selectedDate.month, selectedDate.day);
+      // DateTime endOfDay = startOfDay.add(Duration(days: 1));
 
       QuerySnapshot<Map<String, dynamic>> querySnapshot = await _firestore
           .collection('appointments')
           .where('userId', isEqualTo: userId)
-          .where('creationTimestamp', isGreaterThanOrEqualTo: startOfDay)
-          .where('creationTimestamp', isLessThan: endOfDay)
+          .where('creationTimestamp', isEqualTo: date)
+          // .where('creationTimestamp', isLessThan: endOfDay)
           .get();
 
       List<HistoryModel> appointments = querySnapshot.docs

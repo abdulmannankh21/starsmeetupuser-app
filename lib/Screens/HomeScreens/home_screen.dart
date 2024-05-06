@@ -3,6 +3,7 @@ import 'dart:math';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:starsmeetupuser/GlobalWidgets/text_field_widget.dart';
 import 'package:starsmeetupuser/Utilities/app_colors.dart';
 import 'package:starsmeetupuser/Utilities/app_text_styles.dart';
@@ -148,6 +149,8 @@ class _HomeScreenState extends State<HomeScreen> {
                         onTap: () {
                           Navigator.pushNamed(
                               context, notificationsScreenRoute);
+                          // print(
+                          //     "this is date only: ${DateFormat('yyyy-MM-dd').format(DateTime.now())}");
                         },
                         child: Image.asset(
                           "assets/notificationsIcon.png",
