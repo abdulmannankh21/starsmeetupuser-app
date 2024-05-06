@@ -259,59 +259,59 @@ class _LoginScreenState extends State<LoginScreen> {
     );
   }
 
-  Future<void> onTapSignIn() async {
-    if (!emailKey.currentState!.validate()) return;
-    if (!passwordKey.currentState!.validate()) return;
-    formKey.currentState!.save();
-    if (kDebugMode) {
-      print(emailController.text.trim().toLowerCase());
-    }
-    EasyLoading.show(status: "Loading...\nPlease Wait");
-    await AuthenticationService()
-        .getUser(emailController.text.trim().toLowerCase())
-        .then((value) async {
-      final token = MyPreferences.instance.getToken();
-      if (value["token"] == token) {
-        log("token get successfully");
-        await Authentication()
-            .signIn(
-                email: emailController.text.trim().toLowerCase(),
-                password: passwordController.text.toString())
-            .then((result) async {
-          // log("this is result|: ${result!.displayName}");
-          if (result == null) {
-            EasyLoading.dismiss();
-
-            UserModel? user = await UserService()
-                .getUser(emailController.text.trim().toLowerCase());
-            if (user != null) {
-              MyPreferences.instance.setUser(user: user);
-              EasyLoading.showSuccess("Log In Successful");
-              Navigator.pushNamedAndRemoveUntil(
-                  context, homeScreenRoute, (route) => true,
-                  arguments: true);
-            } else {
-              Fluttertoast.showToast(
-                  msg: "Something went wrong!",
-                  toastLength: Toast.LENGTH_LONG,
-                  gravity: ToastGravity.BOTTOM,
-                  timeInSecForIosWeb: 2,
-                  backgroundColor: redColor,
-                  textColor: Colors.white,
-                  fontSize: 16.0);
-            }
-          } else {
-            if (kDebugMode) {
-              print('User does not exist.');
-            }
-            EasyLoading.dismiss();
-          }
-        });
-      } else if (token == null) {
-        getFCMToken();
-      } else {
-        EasyLoading.showSuccess("You are Already Login another Device");
-      }
-    });
-  }
+  // Future<void> onTapSignIn() async {
+  //   if (!emailKey.currentState!.validate()) return;
+  //   if (!passwordKey.currentState!.validate()) return;
+  //   formKey.currentState!.save();
+  //   if (kDebugMode) {
+  //     print(emailController.text.trim().toLowerCase());
+  //   }
+  //   EasyLoading.show(status: "Loading...\nPlease Wait");
+  //   await AuthenticationService()
+  //       .getUser(emailController.text.trim().toLowerCase())
+  //       .then((value) async {
+  //     final token = MyPreferences.instance.getToken();
+  //     if (value["token"] == token) {
+  //       log("token get successfully");
+  //       await Authentication()
+  //           .signIn(
+  //               email: emailController.text.trim().toLowerCase(),
+  //               password: passwordController.text.toString())
+  //           .then((result) async {
+  //         // log("this is result|: ${result!.displayName}");
+  //         if (result == null) {
+  //           EasyLoading.dismiss();
+  //
+  //           UserModel? user = await UserService()
+  //               .getUser(emailController.text.trim().toLowerCase());
+  //           if (user != null) {
+  //             MyPreferences.instance.setUser(user: user);
+  //             EasyLoading.showSuccess("Log In Successful");
+  //             Navigator.pushNamedAndRemoveUntil(
+  //                 context, homeScreenRoute, (route) => true,
+  //                 arguments: true);
+  //           } else {
+  //             Fluttertoast.showToast(
+  //                 msg: "Something went wrong!",
+  //                 toastLength: Toast.LENGTH_LONG,
+  //                 gravity: ToastGravity.BOTTOM,
+  //                 timeInSecForIosWeb: 2,
+  //                 backgroundColor: redColor,
+  //                 textColor: Colors.white,
+  //                 fontSize: 16.0);
+  //           }
+  //         } else {
+  //           if (kDebugMode) {
+  //             print('User does not exist.');
+  //           }
+  //           EasyLoading.dismiss();
+  //         }
+  //       });
+  //     } else if (token == null) {
+  //       getFCMToken();
+  //     } else {
+  //       EasyLoading.showSuccess("You are Already Login another Device");
+  //     }
+  //   });
+  // }
 }

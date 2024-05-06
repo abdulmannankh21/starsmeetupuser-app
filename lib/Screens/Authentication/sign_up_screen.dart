@@ -376,7 +376,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
             profilePicture: null,
             updatedAt: null,
             userID: emailController.text.trim().toLowerCase(),
-            token: token.toString(),
+            // token: token.toString(),
           ),
         );
 
