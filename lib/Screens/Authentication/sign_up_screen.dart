@@ -337,58 +337,58 @@ class _SignUpScreenState extends State<SignUpScreen> {
     );
   }
 
-  void signUp() async {
-    if (!nameKey.currentState!.validate()) return;
-    if (!emailKey.currentState!.validate()) return;
-    if (!passwordKey.currentState!.validate()) return;
-    if (!confirmPasswordKey.currentState!.validate()) return;
-    if (!phoneNumberKey.currentState!.validate()) return;
-
-    if (passwordController.text != confirmPasswordController.text) {
-      EasyLoading.showError("Password did not match");
-      return;
-    }
-
-    if (!agreed) {
-      EasyLoading.showError(
-          "You must agree to our terms of use and privacy policy");
-      return;
-    }
-
-    try {
-      final result = await Authentication().signUp(
-        email: emailController.text.trim().toLowerCase(),
-        password: passwordController.text,
-      );
-
-      if (result == null) {
-        final token = MyPreferences.instance.getToken();
-        log("this is pref token:${token}");
-        await AuthenticationService().uploadUser(
-          UserModel(
-            name: nameController.text,
-            status: "Active",
-            createdAt: DateTime.now().millisecondsSinceEpoch,
-            backgroundPicture: null,
-            email: emailController.text.trim().toLowerCase(),
-            password: passwordController.text,
-            phoneNumber: countryCode + phoneNumberController.text,
-            profilePicture: null,
-            updatedAt: null,
-            userID: emailController.text.trim().toLowerCase(),
-            // token: token.toString(),
-          ),
-        );
-
-        EasyLoading.showSuccess("Sign Up Successful");
-        Navigator.pushNamedAndRemoveUntil(
-            context, emailVerificationScreenRoute, (route) => false);
-      }
-    } catch (e) {
-      if (kDebugMode) {
-        print(e);
-      }
-      EasyLoading.showError(e.toString());
-    }
-  }
+  // void signUp() async {
+  //   if (!nameKey.currentState!.validate()) return;
+  //   if (!emailKey.currentState!.validate()) return;
+  //   if (!passwordKey.currentState!.validate()) return;
+  //   if (!confirmPasswordKey.currentState!.validate()) return;
+  //   if (!phoneNumberKey.currentState!.validate()) return;
+  //
+  //   if (passwordController.text != confirmPasswordController.text) {
+  //     EasyLoading.showError("Password did not match");
+  //     return;
+  //   }
+  //
+  //   if (!agreed) {
+  //     EasyLoading.showError(
+  //         "You must agree to our terms of use and privacy policy");
+  //     return;
+  //   }
+  //
+  //   try {
+  //     final result = await Authentication().signUp(
+  //       email: emailController.text.trim().toLowerCase(),
+  //       password: passwordController.text,
+  //     );
+  //
+  //     if (result == null) {
+  //       final token = MyPreferences.instance.getToken();
+  //       log("this is pref token:${token}");
+  //       await AuthenticationService().uploadUser(
+  //         UserModel(
+  //           name: nameController.text,
+  //           status: "Active",
+  //           createdAt: DateTime.now().millisecondsSinceEpoch,
+  //           backgroundPicture: null,
+  //           email: emailController.text.trim().toLowerCase(),
+  //           password: passwordController.text,
+  //           phoneNumber: countryCode + phoneNumberController.text,
+  //           profilePicture: null,
+  //           updatedAt: null,
+  //           userID: emailController.text.trim().toLowerCase(),
+  //           // token: token.toString(),
+  //         ),
+  //       );
+  //
+  //       EasyLoading.showSuccess("Sign Up Successful");
+  //       Navigator.pushNamedAndRemoveUntil(
+  //           context, emailVerificationScreenRoute, (route) => false);
+  //     }
+  //   } catch (e) {
+  //     if (kDebugMode) {
+  //       print(e);
+  //     }
+  //     EasyLoading.showError(e.toString());
+  //   }
+  // }
 }
