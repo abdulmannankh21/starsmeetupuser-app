@@ -1,4 +1,7 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:starsmeetupuser/Utilities/app_routes.dart';
 
 import '../../GlobalWidgets/button_widget.dart';
@@ -9,7 +12,7 @@ import '../../models/appointment_model.dart';
 class UpcomingVideoAppointmentDetailsScreen extends StatefulWidget {
   AppointmentModel appointment = AppointmentModel();
 
-   UpcomingVideoAppointmentDetailsScreen({required this.appointment,super.key});
+  UpcomingVideoAppointmentDetailsScreen({required this.appointment, super.key});
 
   @override
   State<UpcomingVideoAppointmentDetailsScreen> createState() =>
@@ -19,6 +22,13 @@ class UpcomingVideoAppointmentDetailsScreen extends StatefulWidget {
 class _UpcomingVideoAppointmentDetailsScreenState
     extends State<UpcomingVideoAppointmentDetailsScreen> {
   bool value = true;
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    log("this is video deatls screen: ${widget.appointment.celebrityImage}");
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -64,9 +74,9 @@ class _UpcomingVideoAppointmentDetailsScreenState
                 height: 240,
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(10.0),
-                  image: const DecorationImage(
-                    image: AssetImage(
-                      "assets/celebrityImage.png",
+                  image: DecorationImage(
+                    image: NetworkImage(
+                      "${widget.appointment.celebrityImage}",
                     ),
                     fit: BoxFit.cover,
                   ),
@@ -78,7 +88,7 @@ class _UpcomingVideoAppointmentDetailsScreenState
             ),
             Center(
               child: Text(
-                "Hamza Ali Abbasi",
+                "${widget.appointment.celebrityName}",
                 style: twentyTwo700TextStyle(color: purpleColor),
               ),
             ),
@@ -110,15 +120,15 @@ class _UpcomingVideoAppointmentDetailsScreenState
                     style: twentyTwo700TextStyle(color: purpleColor),
                   ),
                   Text(
-                    "Time: 12:10 AM",
+                    "Time: ${DateFormat('h:mm a').format(widget.appointment.startTime!)}-${DateFormat('h:mm a').format(widget.appointment.endTime!)}",
                     style: twenty600TextStyle(color: darkGreyColor),
                   ),
                   Text(
-                    "Date: 12-May-2024",
+                    "Date: ${DateFormat('dd-MMM-yy').format(widget.appointment.selectedDate!)}",
                     style: twenty600TextStyle(color: darkGreyColor),
                   ),
                   Text(
-                    "Meeting Type: Video Meeting",
+                    "Meeting Type: ${widget.appointment.serviceName}",
                     style: twenty600TextStyle(color: darkGreyColor),
                   ),
                 ],
@@ -141,11 +151,11 @@ class _UpcomingVideoAppointmentDetailsScreenState
                     style: twenty600TextStyle(color: darkGreyColor),
                   ),
                   Text(
-                    "Meeting Type: Video Meeting",
+                    "Meeting Type: ${widget.appointment.serviceName}",
                     style: twenty600TextStyle(color: darkGreyColor),
                   ),
                   Text(
-                    "Paid Amount: Rs. 6,000",
+                    "Paid Amount: Rs. ${widget.appointment.servicePrice}",
                     style: twenty600TextStyle(color: darkGreyColor),
                   ),
                   Text(
@@ -182,10 +192,10 @@ class _UpcomingVideoAppointmentDetailsScreenState
             Container(
               width: MediaQuery.of(context).size.width,
               height: 400,
-              decoration: const BoxDecoration(
+              decoration: BoxDecoration(
                 color: Colors.grey,
                 image: DecorationImage(
-                  image: AssetImage("assets/celebrityImage.png"),
+                  image: NetworkImage("${widget.appointment.celebrityImage}"),
                   fit: BoxFit.cover,
                 ),
               ),

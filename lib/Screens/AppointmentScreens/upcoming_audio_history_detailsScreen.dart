@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:starsmeetupuser/GlobalWidgets/button_widget.dart';
 import 'package:starsmeetupuser/Utilities/app_colors.dart';
 import 'package:starsmeetupuser/Utilities/app_routes.dart';
@@ -17,7 +18,7 @@ class UpComingAudioDetailsScreen extends StatefulWidget {
 
 class _UpComingAudioDetailsScreenState
     extends State<UpComingAudioDetailsScreen> {
-   bool value = true;
+  bool value = true;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -63,9 +64,9 @@ class _UpComingAudioDetailsScreenState
                 height: 240,
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(10.0),
-                  image: const DecorationImage(
-                    image: AssetImage(
-                      "assets/celebrityImage.png",
+                  image: DecorationImage(
+                    image: NetworkImage(
+                      "${widget.history.celebrityImage}",
                     ),
                     fit: BoxFit.cover,
                   ),
@@ -77,7 +78,7 @@ class _UpComingAudioDetailsScreenState
             ),
             Center(
               child: Text(
-                "Hamza Ali Abbasi",
+                "${widget.history.celebrityName}",
                 style: twentyTwo700TextStyle(color: purpleColor),
               ),
             ),
@@ -109,15 +110,15 @@ class _UpComingAudioDetailsScreenState
                     style: twentyTwo700TextStyle(color: purpleColor),
                   ),
                   Text(
-                    "Time: 12:10 AM",
+                    "Time: ${DateFormat('h:mm a').format(widget.history.startTime!)}-${DateFormat('h:mm a').format(widget.history.endTime!)}",
                     style: twenty600TextStyle(color: darkGreyColor),
                   ),
                   Text(
-                    "Date: 12-May-2024",
+                    "Date: ${DateFormat('dd-MMM-yy').format(widget.history.selectedDate!)}",
                     style: twenty600TextStyle(color: darkGreyColor),
                   ),
                   Text(
-                    "Meeting Type: Audio Meeting",
+                    "Meeting Type: ${widget.history.serviceName}",
                     style: twenty600TextStyle(color: darkGreyColor),
                   ),
                 ],
@@ -140,7 +141,7 @@ class _UpComingAudioDetailsScreenState
                     style: twenty600TextStyle(color: darkGreyColor),
                   ),
                   Text(
-                    "Paid Amount: Rs. 6,000",
+                    "Paid Amount: Rs. ${widget.history.servicePrice}",
                     style: twenty600TextStyle(color: darkGreyColor),
                   ),
                   Text(
@@ -177,10 +178,10 @@ class _UpComingAudioDetailsScreenState
             Container(
               width: MediaQuery.of(context).size.width,
               height: 400,
-              decoration: const BoxDecoration(
+              decoration: BoxDecoration(
                 color: Colors.grey,
                 image: DecorationImage(
-                  image: AssetImage("assets/celebrityImage.png"),
+                  image: NetworkImage("${widget.history.celebrityImage}"),
                   fit: BoxFit.cover,
                 ),
               ),
@@ -197,5 +198,4 @@ class _UpComingAudioDetailsScreenState
       ),
     );
   }
-
 }

@@ -63,22 +63,23 @@ class _AppointmentScreenState extends State<AppointmentScreen>
 
   Future<List<HistoryModel>> _loadHistory() async {
     User? user = FirebaseAuth.instance.currentUser;
-    print(user!.email!);
+    // print(user!.email!);
     return _appointmentService.getHistory(user!.email!);
   }
 
-  Future<List<HistoryModel>> _loadHistoryeithCustom(String pickedDate) async {
+  Future<List<HistoryModel>> _loadHistoryeithCustom(
+      DateTime start, DateTime end) async {
     User? user = FirebaseAuth.instance.currentUser;
     print(user!.email!);
-    return _controller.getHistoryByUserIdCustomdate(user!.email!, pickedDate);
+    return _controller.getHistoryByUserIdCustomdate(user!.email!, start, end);
   }
 
   Future<List<AppointmentModel>> _loadAppointmentWithCustom(
-      String pickedDate) async {
+      DateTime start, DateTime end) async {
     User? user = FirebaseAuth.instance.currentUser;
     print(user!.email!);
     return _appointmentService.getAppointmentsWithCustomdate(
-        user!.email!, pickedDate);
+        user!.email!, start, end);
   }
 
   Future<List<AppointmentModel>> _loadAppointments() async {
@@ -262,7 +263,9 @@ class _AppointmentScreenState extends State<AppointmentScreen>
                                   return UpcomingAppointmentWidget(
                                     name: appointment.celebrityName!,
                                     meetingType: appointment.serviceName!,
+                                    celebrityImage: appointment.celebrityImage!,
                                     onTap: () {
+                                      // log("this is appointmentIndex: ${appointments[index].toJson()}");
                                       appointment.serviceName! !=
                                               "Video Meeting"
                                           ? Navigator.push(
@@ -271,7 +274,8 @@ class _AppointmentScreenState extends State<AppointmentScreen>
                                                 builder: (context) =>
                                                     UpcomingAudioAppointmentDetailsScreen(
                                                         appointment:
-                                                            appointment),
+                                                            appointments[
+                                                                index]),
                                               ),
                                             )
                                           : Navigator.push(
@@ -280,7 +284,8 @@ class _AppointmentScreenState extends State<AppointmentScreen>
                                                 builder: (context) =>
                                                     UpcomingVideoAppointmentDetailsScreen(
                                                         appointment:
-                                                            appointment),
+                                                            appointments[
+                                                                index]),
                                               ),
                                             );
                                     },
@@ -323,6 +328,7 @@ class _AppointmentScreenState extends State<AppointmentScreen>
                                   return UpcomingAppointmentWidget(
                                     name: appointment.celebrityName!,
                                     meetingType: appointment.serviceName!,
+                                    celebrityImage: appointment.celebrityImage!,
                                     onTap: () {
                                       appointment.serviceName! !=
                                               "Video Meeting"
@@ -331,7 +337,8 @@ class _AppointmentScreenState extends State<AppointmentScreen>
                                               MaterialPageRoute(
                                                 builder: (context) =>
                                                     UpComingAudioDetailsScreen(
-                                                        history: appointment),
+                                                        history: appointments[
+                                                            index]),
                                               ),
                                             )
                                           : Navigator.push(
@@ -339,7 +346,8 @@ class _AppointmentScreenState extends State<AppointmentScreen>
                                               MaterialPageRoute(
                                                 builder: (context) =>
                                                     UpcomingVideoHistoryScreen(
-                                                        history: appointment),
+                                                        history: appointments[
+                                                            index]),
                                               ),
                                             );
                                     },
@@ -380,35 +388,6 @@ class _AppointmentScreenState extends State<AppointmentScreen>
         //     return Center()}})
       }
       Navigator.pop(context);
-    });
-  }
-
-  datePickerDialog() {
-    setState(() {
-      //   showGeneralDialog(
-      //       context: context,
-      //       barrierLabel: "Barrier",
-      //       transitionDuration: const Duration(seconds: 0),
-      //       barrierDismissible: true,
-      //       pageBuilder: (context, animation, secondaryAnimation) {
-      //         return StatefulBuilder(builder: (context, setState) {
-      //           return Container(
-      //             child: CalenderPicker(
-      //               DateTime.now(),
-      //               initialSelectedDate: DateTime.now(),
-      //               selectionColor: Colors.black,
-      //               selectedTextColor: Colors.white,
-      //               onDateChange: (date) {
-      //                 // New date selected
-      //                 setState(() {
-      //                   _selectedValue = date;
-      //                   log("this is date: ${_selectedValue}");
-      //                 });
-      //               },
-      //             ),
-      //           );
-      //         });
-      //       });
     });
   }
 
@@ -719,26 +698,45 @@ class _AppointmentScreenState extends State<AppointmentScreen>
   }
 
   Future<void> _selectDate(BuildContext context, String type) async {
-    final DateTime? picked = await showDatePicker(
+    Navigator.pop(context);
+    final pickedDateRange = await showDateRangePicker(
       context: context,
-      initialDate: DateTime.now(),
-      firstDate: DateTime(2000),
-      lastDate: DateTime(2101),
+      firstDate: DateTime.now().subtract(Duration(days: 365)),
+      lastDate: DateTime.now(),
+      initialDateRange: DateTimeRange(
+        start: DateTime.now().subtract(Duration(days: 7)),
+        end: DateTime.now(),
+      ),
     );
-    if (picked != null && picked != _selectedDate) {
-      setState(() {
-        _selectedDate = picked;
-        log("this is selected date: ${DateFormat('yyyy-MM-dd').format(_selectedDate)}");
-        if (type == "upComing") {
-          futureAppointments = _loadAppointmentWithCustom(
-              DateFormat('yyyy-MM-dd').format(_selectedDate).toString());
-          Get.back();
-        } else {
-          log("i am inside of history");
-          futureHistory = _loadHistoryeithCustom(
-              DateFormat('yyyy-MM-dd').format(_selectedDate).toString());
-        }
-      });
+
+    if (pickedDateRange != null) {
+      print(
+          'Selected date range: ${pickedDateRange.start} this to${pickedDateRange.end}');
+      if (type == "upComing") {
+        futureAppointments = _loadAppointmentWithCustom(
+            pickedDateRange.start, pickedDateRange.end);
+        // Get.back();
+      } else {
+        futureHistory =
+            _loadHistoryeithCustom(pickedDateRange.start, pickedDateRange.end);
+        //
+      }
+      setState(() {});
     }
   }
+  // if (picked != null && picked != _selectedDate) {
+  //   setState(() {
+  //     _selectedDate = picked;
+  //     log("this is selected date: ${DateFormat('yyyy-MM-dd').format(_selectedDate)}");
+  //     if (type == "upComing") {
+  // futureAppointments = _loadAppointmentWithCustom(
+  //     DateFormat('yyyy-MM-dd').format(_selectedDate));
+  //       Get.back();
+  //     } else {
+  //       log("i am inside of history");
+  //       futureHistory = _loadHistoryeithCustom(
+  //           DateFormat('yyyy-MM-dd').format(_selectedDate).toString());
+  //     }
+  //   });
+  // }
 }

@@ -1,4 +1,7 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:starsmeetupuser/Utilities/app_routes.dart';
 import 'package:starsmeetupuser/models/appointment_model.dart';
 
@@ -18,6 +21,13 @@ class UpcomingAudioAppointmentDetailsScreen extends StatefulWidget {
 
 class _UpcomingAudioAppointmentDetailsScreenState
     extends State<UpcomingAudioAppointmentDetailsScreen> {
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    log("this is details screen:${widget.appointment.toJson()}");
+  }
+
   bool value = true;
   @override
   Widget build(BuildContext context) {
@@ -64,9 +74,9 @@ class _UpcomingAudioAppointmentDetailsScreenState
                 height: 240,
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(10.0),
-                  image: const DecorationImage(
-                    image: AssetImage(
-                      "assets/celebrityImage.png",
+                  image: DecorationImage(
+                    image: NetworkImage(
+                      "${widget.appointment.celebrityImage}",
                     ),
                     fit: BoxFit.cover,
                   ),
@@ -78,7 +88,7 @@ class _UpcomingAudioAppointmentDetailsScreenState
             ),
             Center(
               child: Text(
-                "Hamza Ali Abbasi",
+                "${widget.appointment.celebrityName}",
                 style: twentyTwo700TextStyle(color: purpleColor),
               ),
             ),
@@ -110,15 +120,15 @@ class _UpcomingAudioAppointmentDetailsScreenState
                     style: twentyTwo700TextStyle(color: purpleColor),
                   ),
                   Text(
-                    "Time: 12:10 AM",
+                    "Time: ${DateFormat('h:mm a').format(widget.appointment.startTime!)}-${DateFormat('h:mm a').format(widget.appointment.endTime!)}",
                     style: twenty600TextStyle(color: darkGreyColor),
                   ),
                   Text(
-                    "Date: 12-May-2024",
+                    "Date: ${DateFormat('dd-MMM-yy').format(widget.appointment.selectedDate!)}",
                     style: twenty600TextStyle(color: darkGreyColor),
                   ),
                   Text(
-                    "Meeting Type: Audio Meeting",
+                    "Meeting Type: ${widget.appointment.serviceName}",
                     style: twenty600TextStyle(color: darkGreyColor),
                   ),
                 ],
@@ -141,7 +151,7 @@ class _UpcomingAudioAppointmentDetailsScreenState
                     style: twenty600TextStyle(color: darkGreyColor),
                   ),
                   Text(
-                    "Paid Amount: Rs. 6,000",
+                    "Paid Amount: Rs. ${widget.appointment.servicePrice}",
                     style: twenty600TextStyle(color: darkGreyColor),
                   ),
                   Text(
@@ -178,10 +188,10 @@ class _UpcomingAudioAppointmentDetailsScreenState
             Container(
               width: MediaQuery.of(context).size.width,
               height: 400,
-              decoration: const BoxDecoration(
+              decoration: BoxDecoration(
                 color: Colors.grey,
                 image: DecorationImage(
-                  image: AssetImage("assets/celebrityImage.png"),
+                  image: NetworkImage("${widget.appointment.celebrityImage}"),
                   fit: BoxFit.cover,
                 ),
               ),

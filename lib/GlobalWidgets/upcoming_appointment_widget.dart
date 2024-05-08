@@ -7,13 +7,14 @@ import '../Utilities/app_text_styles.dart';
 class UpcomingAppointmentWidget extends StatefulWidget {
   final String name;
   final String meetingType;
+  final String celebrityImage;
   final VoidCallback? onTap;
 
-   UpcomingAppointmentWidget({
-
+  UpcomingAppointmentWidget({
     required this.name,
     required this.meetingType,
-     this.onTap,
+    required this.celebrityImage,
+    this.onTap,
   });
 
   @override
@@ -21,8 +22,7 @@ class UpcomingAppointmentWidget extends StatefulWidget {
       _UpcomingAppointmentWidgetState();
 }
 
-class _UpcomingAppointmentWidgetState
-    extends State<UpcomingAppointmentWidget> {
+class _UpcomingAppointmentWidgetState extends State<UpcomingAppointmentWidget> {
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -48,9 +48,9 @@ class _UpcomingAppointmentWidgetState
                   height: 80,
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(10.0),
-                    image: const DecorationImage(
-                      image: AssetImage(
-                        "assets/celebrityImage.png",
+                    image: DecorationImage(
+                      image: NetworkImage(
+                        "${widget.celebrityImage}",
                       ),
                       fit: BoxFit.cover,
                     ),
