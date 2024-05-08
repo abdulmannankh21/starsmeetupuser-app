@@ -29,6 +29,7 @@ class _UpcomingAudioAppointmentDetailsScreenState
   }
 
   bool value = true;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -162,11 +163,30 @@ class _UpcomingAudioAppointmentDetailsScreenState
                     "Paid on 11th Jan 2023   3:00 PM",
                     style: twenty600TextStyle(color: darkGreyColor),
                   ),
+                  const SizedBox(
+                    height: 30,
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      TextButton(
+                          onPressed: () {},
+                          child: Text(
+                            "Cancel Appointment",
+                            style: TextStyle(
+                                color: Colors.red,
+                                fontSize: 20,
+                                decoration: TextDecoration.underline,
+                                decorationColor: Colors.red,
+                                decorationThickness: 2.0),
+                          )),
+                    ],
+                  )
                 ],
               ),
             ),
             const SizedBox(
-              height: 30,
+              height: 10,
             ),
             const Divider(
               height: 1,

@@ -696,10 +696,64 @@ class _AppointmentScreenState extends State<AppointmentScreen>
       },
     );
   }
+  // Future<void> _selectDate(BuildContext context, String type) async {
+  //   showCustomDateRangePicker(
+  //     context,
+  //     dismissible: true,
+  //     minimumDate: DateTime.now().subtract(const Duration(days: 7)),
+  //     maximumDate: DateTime.now().add(const Duration(days: 7)),
+  //     endDate: endDate,
+  //     startDate: startDate,
+  //     backgroundColor: Colors.white,
+  //     primaryColor: purpleColor,
+  //     onApplyClick: (start, end) {
+  //       setState(() {
+  //         endDate = end;
+  //         startDate = start;
+  //       });
+  //     },
+  //     onCancelClick: () {
+  //       setState(() {
+  //         endDate = null;
+  //         startDate = null;
+  //       });
+  //     },
+  //   );
+  //
+  //   // Navigator.pop(context);
+  //   //
+  //   // final pickedDateRange = await showDateRangePicker(
+  //   //
+  //   //   context: context,
+  //   //   firstDate: DateTime.now().subtract(Duration(days: 365)),
+  //   //   lastDate: DateTime.now(),
+  //   //   initialDateRange: DateTimeRange(
+  //   //     start: DateTime.now().subtract(Duration(days: 7)),
+  //   //     end: DateTime.now(),
+  //   //   ),
+  //   // );
+  //   //
+  //   if (startDate != null || endDate != null) {
+  //     print(
+  //         'Selected date range: ${startDate} this to${endDate}');
+  //     if (type == "upComing") {
+  //       futureAppointments = _loadAppointmentWithCustom(
+  //           startDate!, endDate!);
+  //       // Get.back();
+  //     } else {
+  //       futureHistory =
+  //           _loadHistoryeithCustom(startDate!, endDate!);
+  //       //
+  //     }
+  //     setState(() {});
+  //   }
+  // }
 
   Future<void> _selectDate(BuildContext context, String type) async {
     Navigator.pop(context);
+
     final pickedDateRange = await showDateRangePicker(
+
       context: context,
       firstDate: DateTime.now().subtract(Duration(days: 365)),
       lastDate: DateTime.now(),
@@ -715,6 +769,7 @@ class _AppointmentScreenState extends State<AppointmentScreen>
       if (type == "upComing") {
         futureAppointments = _loadAppointmentWithCustom(
             pickedDateRange.start, pickedDateRange.end);
+        // upcomingSelectedDays = "${pickedDateRange.start} ${pickedDateRange.end}";
         // Get.back();
       } else {
         futureHistory =
