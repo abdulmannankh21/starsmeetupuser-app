@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
@@ -93,6 +95,7 @@ class _MyAppState extends State<MyApp> {
         homeScreenRoute: (context) => const HomeScreen(),
         checkoutScreenRoute: (context) {
           var i = ModalRoute.of(context)!.settings.arguments;
+          log("this is data of this ${i}");
           return CheckoutScreen(i);
         },
         // upcomingVideoAppointmentDetailsScreenRoute: (context) =>

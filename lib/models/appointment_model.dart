@@ -15,25 +15,26 @@ class AppointmentModel {
   String? timeSlotId;
   double? supportYourStarCharges;
   String? paymentMethod;
+  String? status;
 
-  AppointmentModel({
-    this.serviceDuration,
-    this.serviceName,
-    this.servicePrice,
-    this.celebrityImage,
-    this.timeSlotId,
-    this.celebrityName,
-    this.celebrityId,
-    this.userId,
-    this.userName,
-    this.creationTimestamp,
-    this.startTime,
-    this.endTime,
-    this.selectedDate,
-    this.promoCode,
-    this.supportYourStarCharges,
-    this.paymentMethod,
-  });
+  AppointmentModel(
+      {this.serviceDuration,
+      this.serviceName,
+      this.servicePrice,
+      this.celebrityImage,
+      this.timeSlotId,
+      this.celebrityName,
+      this.celebrityId,
+      this.userId,
+      this.userName,
+      this.creationTimestamp,
+      this.startTime,
+      this.endTime,
+      this.selectedDate,
+      this.promoCode,
+      this.supportYourStarCharges,
+      this.paymentMethod,
+      this.status});
 
   factory AppointmentModel.fromJson(Map<String, dynamic> json) {
     return AppointmentModel(
@@ -57,6 +58,7 @@ class AppointmentModel {
       promoCode: json['promoCode'],
       supportYourStarCharges: json['supportYourStarCharges']?.toDouble(),
       paymentMethod: json['paymentMethod'],
+      status: json['status'],
     );
   }
 
@@ -78,6 +80,7 @@ class AppointmentModel {
       'promoCode': promoCode,
       'supportYourStarCharges': supportYourStarCharges,
       'paymentMethod': paymentMethod,
+      "status": status
     };
   }
 }

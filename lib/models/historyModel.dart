@@ -16,24 +16,25 @@ class HistoryModel {
   double? supportYourStarCharges;
   String? paymentMethod;
 
-  HistoryModel({
-    this.serviceDuration,
-    this.serviceName,
-    this.servicePrice,
-    this.celebrityImage,
-    this.timeSlotId,
-    this.celebrityName,
-    this.celebrityId,
-    this.userId,
-    this.userName,
-    this.creationTimestamp,
-    this.startTime,
-    this.endTime,
-    this.selectedDate,
-    this.promoCode,
-    this.supportYourStarCharges,
-    this.paymentMethod,
-  });
+  String? status;
+  HistoryModel(
+      {this.serviceDuration,
+      this.serviceName,
+      this.servicePrice,
+      this.celebrityImage,
+      this.timeSlotId,
+      this.celebrityName,
+      this.celebrityId,
+      this.userId,
+      this.userName,
+      this.creationTimestamp,
+      this.startTime,
+      this.endTime,
+      this.selectedDate,
+      this.promoCode,
+      this.supportYourStarCharges,
+      this.paymentMethod,
+      this.status});
 
   factory HistoryModel.fromJson(Map<String, dynamic> json) {
     return HistoryModel(
@@ -58,6 +59,7 @@ class HistoryModel {
       promoCode: json['promoCode'],
       supportYourStarCharges: json['supportYourStarCharges']?.toDouble(),
       paymentMethod: json['paymentMethod'],
+      status: json['status'],
     );
   }
 
@@ -79,6 +81,7 @@ class HistoryModel {
       'promoCode': promoCode,
       'supportYourStarCharges': supportYourStarCharges,
       'paymentMethod': paymentMethod,
+      "status": status
     };
   }
 }

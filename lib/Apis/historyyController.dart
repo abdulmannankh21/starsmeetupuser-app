@@ -22,6 +22,7 @@ class HistoryController extends GetxController {
       QuerySnapshot<Map<String, dynamic>> querySnapshot = await _firestore
           .collection('appointments')
           .where('userId', isEqualTo: userId)
+          .where("status", isEqualTo: "active")
           .get();
 
       List<HistoryModel> appointments = querySnapshot.docs
@@ -61,6 +62,7 @@ class HistoryController extends GetxController {
       QuerySnapshot<Map<String, dynamic>> querySnapshot = await _firestore
           .collection('appointments')
           .where('userId', isEqualTo: userId)
+          .where("status", isEqualTo: "active")
           .get();
 
       List<HistoryModel> appointments = querySnapshot.docs
@@ -94,6 +96,7 @@ class HistoryController extends GetxController {
       QuerySnapshot<Map<String, dynamic>> querySnapshot = await _firestore
           .collection('appointments')
           .where('userId', isEqualTo: userId)
+          .where("status", isEqualTo: "active")
           .get();
       log("i am here: ${querySnapshot.docs.length}");
 
@@ -118,6 +121,7 @@ class HistoryController extends GetxController {
       QuerySnapshot<Map<String, dynamic>> querySnapshot = await _firestore
           .collection('appointments')
           .where('userId', isEqualTo: userId)
+          .where("status", isEqualTo: "active")
           .get();
       List<HistoryModel> appointments = querySnapshot.docs
           .map((doc) => HistoryModel.fromJson(doc.data()))

@@ -1,10 +1,16 @@
 // ignore_for_file: prefer_typing_uninitialized_variables, must_be_immutable
 
+import 'dart:developer';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
+import 'package:get/get.dart';
 import 'package:intl/intl.dart';
+import 'package:starsmeetupuser/Apis/notificationController.dart';
 import 'package:starsmeetupuser/Utilities/app_routes.dart';
+import 'package:starsmeetupuser/models/notification_Model.dart';
 
 import '../../Apis/appointment_apis.dart';
 import '../../Apis/promo_code_apis.dart';
@@ -27,10 +33,24 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
   int selected = -1;
   int selected2 = -1;
   AppointmentModel? appointment;
+  late NotificationModel notification;
   var promoCodeController = TextEditingController();
   String? supportYourStarAmount;
+  NotificationController controller = Get.put(NotificationController());
   assignModel() {
+    log("this is data:${widget.data}");
     appointment = widget.data as AppointmentModel;
+    Map<String, dynamic> datee = {
+      "serviceName": appointment!.serviceName,
+      "celebrityName": appointment!.celebrityName,
+      "userId": appointment!.userId,
+      "userName": appointment!.userName,
+      "creationTimestamp": DateTime.now().toString(),
+      "status": "active",
+    };
+    notification = NotificationModel.fromJson(datee);
+
+    // log("this is map data; ${notification.celebrityName}");
     setState(() {});
   }
 
@@ -485,15 +505,20 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                   appointment!.creationTimestamp =
                       DateFormat('yyyy-MM-dd').format(DateTime.now());
                   appointment!.promoCode = promoCodeController.text;
+                  appointment!.status = "active";
 
                   await AppointmentService()
                       .uploadAppointment(appointment!)
-                      .then((value) {
-                    EasyLoading.showSuccess(
-                        "Appointment Created Successfully!");
-                    Navigator.pushNamedAndRemoveUntil(
-                        context, homeScreenRoute, (route) => true,
-                        arguments: true);
+                      .then((value) async {
+                    await controller
+                        .uploadNotification(notification!)
+                        .whenComplete(() {
+                      EasyLoading.showSuccess(
+                          "Appointment Created Successfully!");
+                      Navigator.pushNamedAndRemoveUntil(
+                          context, homeScreenRoute, (route) => true,
+                          arguments: true);
+                    });
                   });
                 },
                 textStyle: twentyTwo700TextStyle(color: Colors.white),

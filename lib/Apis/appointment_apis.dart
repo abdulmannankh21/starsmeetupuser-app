@@ -21,6 +21,7 @@ class AppointmentService {
       QuerySnapshot<Map<String, dynamic>> querySnapshot = await _firestore
           .collection('appointments')
           .where('userId', isEqualTo: userId)
+          .where("status", isEqualTo: "active")
           .get();
       log("i am here: ${querySnapshot.docs.length}");
       return querySnapshot.docs
@@ -45,6 +46,7 @@ class AppointmentService {
       QuerySnapshot<Map<String, dynamic>> querySnapshot = await _firestore
           .collection('appointments')
           .where('userId', isEqualTo: userId)
+          .where("status", isEqualTo: "active")
           .get();
 
       List<AppointmentModel> appointments = querySnapshot.docs
@@ -83,6 +85,7 @@ class AppointmentService {
 
       QuerySnapshot<Map<String, dynamic>> querySnapshot = await _firestore
           .collection('appointments')
+          .where("status", isEqualTo: "active")
           .where('userId', isEqualTo: userId)
           .get();
 
@@ -118,6 +121,7 @@ class AppointmentService {
       QuerySnapshot<Map<String, dynamic>> querySnapshot = await _firestore
           .collection('appointments')
           .where('celebrityId', isEqualTo: celebrityId)
+          .where("status", isEqualTo: "active")
           .get();
 
       return querySnapshot.docs
@@ -136,6 +140,7 @@ class AppointmentService {
 
       QuerySnapshot<Map<String, dynamic>> querySnapshot = await _firestore
           .collection('appointments')
+          .where("status", isEqualTo: "active")
           .where('userId', isEqualTo: userId)
           .get();
 
@@ -175,6 +180,7 @@ class AppointmentService {
       QuerySnapshot<Map<String, dynamic>> querySnapshot = await _firestore
           .collection('appointments')
           .where('userId', isEqualTo: userId)
+          .where("status", isEqualTo: "active")
           .get();
       List<AppointmentModel> appointments = querySnapshot.docs
           .map((doc) => AppointmentModel.fromJson(doc.data()))

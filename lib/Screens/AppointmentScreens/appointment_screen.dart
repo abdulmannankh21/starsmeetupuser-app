@@ -1,5 +1,6 @@
 import 'dart:developer';
 
+import 'package:custom_date_range_picker/custom_date_range_picker.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -696,102 +697,88 @@ class _AppointmentScreenState extends State<AppointmentScreen>
       },
     );
   }
+
+  Future<void> _selectDate(BuildContext context, String type) async {
+    showCustomDateRangePicker(
+      context,
+      dismissible: true,
+      minimumDate: DateTime.now().subtract(const Duration(days: 7)),
+      maximumDate: DateTime.now().add(const Duration(days: 7)),
+      endDate: DateTime.now().add(Duration(days: 7)),
+      startDate: DateTime.now(),
+      backgroundColor: Colors.white,
+      primaryColor: purpleColor,
+      onApplyClick: (start, end) {
+        setState(() {
+          log("this is the date:${start}     ${end}");
+          if (start != null || end != null) {
+            if (type == "upComing") {
+              futureAppointments = _loadAppointmentWithCustom(start!, end!);
+              // Get.back();
+            } else {
+              futureHistory = _loadHistoryeithCustom(start!, end!);
+              //
+            }
+            Navigator.pop(context);
+            setState(() {});
+          }
+          // endDate = end;
+          // startDate = start;
+        });
+      },
+      onCancelClick: () {
+        setState(() {
+          Navigator.pop(context);
+          // endDate = null;
+          // startDate = null;
+        });
+      },
+    );
+
+    // Navigator.pop(context);
+    //
+    // final pickedDateRange = await showDateRangePicker(
+    //
+    //   context: context,
+    //   firstDate: DateTime.now().subtract(Duration(days: 365)),
+    //   lastDate: DateTime.now(),
+    //   initialDateRange: DateTimeRange(
+    //     start: DateTime.now().subtract(Duration(days: 7)),
+    //     end: DateTime.now(),
+    //   ),
+    // );
+    //
+    //
+  }
+
   // Future<void> _selectDate(BuildContext context, String type) async {
-  //   showCustomDateRangePicker(
-  //     context,
-  //     dismissible: true,
-  //     minimumDate: DateTime.now().subtract(const Duration(days: 7)),
-  //     maximumDate: DateTime.now().add(const Duration(days: 7)),
-  //     endDate: endDate,
-  //     startDate: startDate,
-  //     backgroundColor: Colors.white,
-  //     primaryColor: purpleColor,
-  //     onApplyClick: (start, end) {
-  //       setState(() {
-  //         endDate = end;
-  //         startDate = start;
-  //       });
-  //     },
-  //     onCancelClick: () {
-  //       setState(() {
-  //         endDate = null;
-  //         startDate = null;
-  //       });
-  //     },
+  //   Navigator.pop(context);
+
+  //   final pickedDateRange = await showDateRangePicker(
+
+  //     context: context,
+  //     firstDate: DateTime.now().subtract(Duration(days: 365)),
+  //     lastDate: DateTime.now(),
+  //     initialDateRange: DateTimeRange(
+  //       start: DateTime.now().subtract(Duration(days: 7)),
+  //       end: DateTime.now(),
+  //     ),
   //   );
-  //
-  //   // Navigator.pop(context);
-  //   //
-  //   // final pickedDateRange = await showDateRangePicker(
-  //   //
-  //   //   context: context,
-  //   //   firstDate: DateTime.now().subtract(Duration(days: 365)),
-  //   //   lastDate: DateTime.now(),
-  //   //   initialDateRange: DateTimeRange(
-  //   //     start: DateTime.now().subtract(Duration(days: 7)),
-  //   //     end: DateTime.now(),
-  //   //   ),
-  //   // );
-  //   //
-  //   if (startDate != null || endDate != null) {
+
+  //   if (pickedDateRange != null) {
   //     print(
-  //         'Selected date range: ${startDate} this to${endDate}');
+  //         'Selected date range: ${pickedDateRange.start} this to${pickedDateRange.end}');
   //     if (type == "upComing") {
   //       futureAppointments = _loadAppointmentWithCustom(
-  //           startDate!, endDate!);
+  //           pickedDateRange.start, pickedDateRange.end);
+  //       // upcomingSelectedDays = "${pickedDateRange.start} ${pickedDateRange.end}";
   //       // Get.back();
   //     } else {
   //       futureHistory =
-  //           _loadHistoryeithCustom(startDate!, endDate!);
+  //           _loadHistoryeithCustom(pickedDateRange.start, pickedDateRange.end);
   //       //
   //     }
   //     setState(() {});
   //   }
-  // }
-
-  Future<void> _selectDate(BuildContext context, String type) async {
-    Navigator.pop(context);
-
-    final pickedDateRange = await showDateRangePicker(
-
-      context: context,
-      firstDate: DateTime.now().subtract(Duration(days: 365)),
-      lastDate: DateTime.now(),
-      initialDateRange: DateTimeRange(
-        start: DateTime.now().subtract(Duration(days: 7)),
-        end: DateTime.now(),
-      ),
-    );
-
-    if (pickedDateRange != null) {
-      print(
-          'Selected date range: ${pickedDateRange.start} this to${pickedDateRange.end}');
-      if (type == "upComing") {
-        futureAppointments = _loadAppointmentWithCustom(
-            pickedDateRange.start, pickedDateRange.end);
-        // upcomingSelectedDays = "${pickedDateRange.start} ${pickedDateRange.end}";
-        // Get.back();
-      } else {
-        futureHistory =
-            _loadHistoryeithCustom(pickedDateRange.start, pickedDateRange.end);
-        //
-      }
-      setState(() {});
-    }
-  }
-  // if (picked != null && picked != _selectedDate) {
-  //   setState(() {
-  //     _selectedDate = picked;
-  //     log("this is selected date: ${DateFormat('yyyy-MM-dd').format(_selectedDate)}");
-  //     if (type == "upComing") {
-  // futureAppointments = _loadAppointmentWithCustom(
-  //     DateFormat('yyyy-MM-dd').format(_selectedDate));
-  //       Get.back();
-  //     } else {
-  //       log("i am inside of history");
-  //       futureHistory = _loadHistoryeithCustom(
-  //           DateFormat('yyyy-MM-dd').format(_selectedDate).toString());
-  //     }
-  //   });
   // }
 }
