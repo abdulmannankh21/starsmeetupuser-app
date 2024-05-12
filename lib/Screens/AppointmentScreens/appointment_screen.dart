@@ -86,7 +86,7 @@ class _AppointmentScreenState extends State<AppointmentScreen>
   Future<List<AppointmentModel>> _loadAppointments() async {
     User? user = FirebaseAuth.instance.currentUser;
     print(user!.email!);
-    return _appointmentService.getAppointmentsByUserId(user!.email!);
+    return _appointmentService.getAppointmentsByStatus(user!.email!,"Created");
   }
 
   Future<List<AppointmentModel>> _loadAppointmentsThisMonth() async {

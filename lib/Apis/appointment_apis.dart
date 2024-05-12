@@ -33,6 +33,24 @@ class AppointmentService {
       return [];
     }
   }
+  Future<List<AppointmentModel>> getAppointmentsByStatus(String userId, String status) async {
+    try {
+      QuerySnapshot<Map<String, dynamic>> querySnapshot = await _firestore
+          .collection('appointments')
+          .where('userId', isEqualTo: userId)
+          .where('status', isEqualTo: status) // Filter by appointment status
+          .get();
+      log("i am here: ${querySnapshot.docs.length}");
+      return querySnapshot.docs
+          .map((doc) => AppointmentModel.fromJson(doc.data()))
+          .toList();
+    } catch (e) {
+      print('Error getting appointments by status: $e');
+      // Handle error accordingly
+      return [];
+    }
+  }
+
 
   Future<List<AppointmentModel>> getAppointmentsByUserIdCurrentMonth(
       String userId) async {

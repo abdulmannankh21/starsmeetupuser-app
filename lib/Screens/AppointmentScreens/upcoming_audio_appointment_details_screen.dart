@@ -1,10 +1,13 @@
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:get/get_core/src/get_main.dart';
 import 'package:intl/intl.dart';
 import 'package:starsmeetupuser/Utilities/app_routes.dart';
 import 'package:starsmeetupuser/models/appointment_model.dart';
 
+import '../../Apis/appointment_apis.dart';
 import '../../GlobalWidgets/button_widget.dart';
 import '../../Utilities/app_colors.dart';
 import '../../Utilities/app_text_styles.dart';
@@ -170,7 +173,16 @@ class _UpcomingAudioAppointmentDetailsScreenState
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       TextButton(
-                          onPressed: () {},
+                          onPressed: () async{
+                            widget.appointment!.status = "Cancelled";
+                            await AppointmentService()
+                                .uploadAppointment(widget.appointment);
+                            Navigator.pop(context);
+                            Navigator.pop(context);
+                            // Get.back();
+                            // Get.back();
+                            print("deleted");
+                          },
                           child: Text(
                             "Cancel Appointment",
                             style: TextStyle(

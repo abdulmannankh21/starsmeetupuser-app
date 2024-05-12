@@ -196,10 +196,12 @@ class _HistoryAppointmentWidgetState extends State<HistoryAppointmentWidget> {
 }
 
 class CancelledAppointmentWidget extends StatefulWidget {
-  final int count;
-  final VoidCallback onTap;
+  final String name;
+  final String meetingType;
+  final String celebrityImage;
+  final VoidCallback? onTap;
   const CancelledAppointmentWidget(
-      {super.key, required this.count, required this.onTap});
+      {super.key,  required this.onTap, required this.name, required this.meetingType, required this.celebrityImage});
 
   @override
   State<CancelledAppointmentWidget> createState() =>
@@ -212,7 +214,6 @@ class _CancelledAppointmentWidgetState
   Widget build(BuildContext context) {
     return Column(
       children: [
-        for (int i = 0; i < widget.count; i++)
           GestureDetector(
             onTap: widget.onTap,
             child: Container(
@@ -234,9 +235,9 @@ class _CancelledAppointmentWidgetState
                     height: 80,
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(10.0),
-                      image: const DecorationImage(
-                        image: AssetImage(
-                          "assets/celebrityImage.png",
+                      image: DecorationImage(
+                        image: NetworkImage(
+                          "${widget.celebrityImage}",
                         ),
                         fit: BoxFit.cover,
                       ),
@@ -253,7 +254,7 @@ class _CancelledAppointmentWidgetState
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
                               Text(
-                                "Faizan Azhar",
+                                widget.name,
                                 style: eighteen700TextStyle(
                                   color: purpleColor,
                                 ),
@@ -270,9 +271,9 @@ class _CancelledAppointmentWidgetState
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
                               Text(
-                                i % 2 == 0 ? "Audio Meeting" : "Video Meeting",
+                         widget.meetingType,
                                 style: fourteen600TextStyle(
-                                  color: i % 2 == 0 ? redColor : greenColor,
+                                  color:  greenColor,
                                 ),
                               ),
                               Text(

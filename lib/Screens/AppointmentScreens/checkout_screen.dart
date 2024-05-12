@@ -505,7 +505,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                   appointment!.creationTimestamp =
                       DateFormat('yyyy-MM-dd').format(DateTime.now());
                   appointment!.promoCode = promoCodeController.text;
-                  appointment!.status = "active";
+                  appointment!.status = "Created";
 
                   await AppointmentService()
                       .uploadAppointment(appointment!)
