@@ -516,7 +516,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                       EasyLoading.showSuccess(
                           "Appointment Created Successfully!");
                       Navigator.pushNamedAndRemoveUntil(
-                          context, homeScreenRoute, (route) => true,
+                          context, homeScreenRoute, (route) => false,
                           arguments: true);
                     });
                   });

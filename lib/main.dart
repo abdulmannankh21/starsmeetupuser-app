@@ -116,8 +116,8 @@ class _MyAppState extends State<MyApp> {
         helpScreenRoute: (context) => const HelpScreen(),
         reviewsScreenRoute: (context) => const ReviewsScreen(),
         privacyPolicyScreenRoute: (context) => const PrivacyPolicyScreen(),
-        cancelledAppointmentDetailsScreenRoute: (context) =>
-            const CancelledAppointmentDetailsScreen(),
+        // cancelledAppointmentDetailsScreenRoute: (context) =>
+        //      CancelledAppointmentDetailsScreen(),
         termsOfUseScreenRoute: (context) => const TermsOfUseScreen(),
         historyAppointmentDetailsScreenRoute: (context) =>
             const HistoryAppointmentDetailsScreen(),

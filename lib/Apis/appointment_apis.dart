@@ -54,7 +54,7 @@ class AppointmentService {
           .where((appointment) {
         // Parse creationTimestamp string to DateTime object
         DateTime creationTimestamp =
-            DateTime.parse(appointment.creationTimestamp.toString());
+            DateTime.parse(appointment.startTime.toString());
         // Check if creationTimestamp is within the current month
         return creationTimestamp.isAfter(startOfMonth) &&
             creationTimestamp.isBefore(endOfMonth);
@@ -94,7 +94,7 @@ class AppointmentService {
           .where((appointment) {
         // Parse creationTimestamp string to DateTime object
         DateTime creationTimestamp =
-            DateTime.parse(appointment.creationTimestamp.toString());
+            DateTime.parse(appointment.startTime.toString());
         // Check if creationTimestamp is within the current year
         return creationTimestamp.isAfter(startOfYear) &&
             creationTimestamp.isBefore(endOfYear);
@@ -175,7 +175,7 @@ class AppointmentService {
     int currentYear = DateTime.now().year;
     DateTime startOfYear =
         DateTime(startDate.year, startDate.month, startDate.day);
-    DateTime endOfYear = DateTime(endDate.year, endDate.month, endDate.day);
+    DateTime endOfYear = DateTime(endDate.year, endDate.month, endDate.day + 1);
     try {
       QuerySnapshot<Map<String, dynamic>> querySnapshot = await _firestore
           .collection('appointments')
@@ -187,7 +187,7 @@ class AppointmentService {
           .where((appointment) {
         // Parse creationTimestamp string to DateTime object
         DateTime creationTimestamp =
-            DateTime.parse(appointment.creationTimestamp.toString());
+            DateTime.parse(appointment.startTime.toString());
         // Check if creationTimestamp is within the current year
         return creationTimestamp.isAfter(startOfYear) &&
             creationTimestamp.isBefore(endOfYear);
@@ -203,6 +203,51 @@ class AppointmentService {
       });
 
       return appointments;
+    } catch (e) {
+      print('Error getting appointments by user ID: $e');
+      // Handle error accordingly
+      return [];
+    }
+  }
+
+  Future<void> cancelAppointmentsByUserId(
+      String userId, String tomeSoltId) async {
+    try {
+      QuerySnapshot<Map<String, dynamic>> querySnapshot = await _firestore
+          .collection('appointments')
+          .where('userId', isEqualTo: userId)
+          .where("timeSlotId", isEqualTo: tomeSoltId)
+          .where("status", isEqualTo: "active")
+          .get();
+
+      List<QueryDocumentSnapshot<Map<String, dynamic>>> docs =
+          querySnapshot.docs;
+
+      for (var doc in docs) {
+        await _firestore.collection('appointments').doc(doc.id).update({
+          'status': 'cancelled',
+        });
+      }
+
+      print('Appointments cancelled successfully');
+    } catch (e) {
+      print('Error cancelling appointments by user ID: $e');
+      // Handle error accordingly
+    }
+  }
+
+  Future<List<AppointmentModel>> getCancelledAppointmentsByUserId(
+      String userId) async {
+    try {
+      QuerySnapshot<Map<String, dynamic>> querySnapshot = await _firestore
+          .collection('appointments')
+          .where('userId', isEqualTo: userId)
+          .where("status", isEqualTo: "cancelled")
+          .get();
+      log("i am here: ${querySnapshot.docs.length}");
+      return querySnapshot.docs
+          .map((doc) => AppointmentModel.fromJson(doc.data()))
+          .toList();
     } catch (e) {
       print('Error getting appointments by user ID: $e');
       // Handle error accordingly

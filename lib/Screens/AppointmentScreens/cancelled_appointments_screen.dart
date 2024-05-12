@@ -1,4 +1,8 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:starsmeetupuser/Apis/appointment_apis.dart';
+import 'package:starsmeetupuser/Screens/AppointmentScreens/cancelled_appointment_details_screen.dart';
+import 'package:starsmeetupuser/models/appointment_model.dart';
 
 import '../../GlobalWidgets/button_widget.dart';
 import '../../GlobalWidgets/upcoming_appointment_widget.dart';
@@ -16,14 +20,27 @@ class CancelledAppointmentScreen extends StatefulWidget {
 
 class _CancelledAppointmentScreenState
     extends State<CancelledAppointmentScreen> {
-  String _selectedItem = 'Option 1';
+  final AppointmentService _appointmentService = AppointmentService();
+  late Future<List<AppointmentModel>> futureAppointments;
+  Future<List<AppointmentModel>> _loadAppointments() async {
+    User? user = FirebaseAuth.instance.currentUser;
+    print(user!.email!);
+    return _appointmentService.getCancelledAppointmentsByUserId(user!.email!);
+  }
 
-  final List<String> _options = [
-    'Option 1',
-    'Option 2',
-    'Option 3',
-    'Option 4'
-  ];
+  String _selectedItem = 'All';
+
+  final List<String> _options = ['All', 'This month', 'Option 3', 'Option 4'];
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    setState(() {
+      futureAppointments = _loadAppointments().whenComplete(() {
+        // futureHistory = _loadHistory();
+      });
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -31,77 +48,101 @@ class _CancelledAppointmentScreenState
       backgroundColor: Colors.white,
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 20),
-        child: Column(
-          children: [
-            const SizedBox(
-              height: 50,
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                GestureDetector(
-                  onTap: () {
-                    Navigator.pop(context);
-                  },
-                  child: const Icon(
-                    Icons.arrow_back_ios,
-                    color: Colors.grey,
-                    size: 20,
-                  ),
-                ),
-                Text(
-                  "Cancelled Appointments",
-                  style: twentyTwo700TextStyle(color: purpleColor),
-                ),
-                const SizedBox(
-                  width: 20,
-                ),
-              ],
-            ),
-            const SizedBox(
-              height: 20,
-            ),
-            Align(
-              alignment: Alignment.centerRight,
-              child: GestureDetector(
-                onTap: () {
-                  showCancelledPopUp(context);
-                },
-                child: Container(
-                  width: 30,
-                  height: 30,
-                  decoration: BoxDecoration(
-                    border: Border.all(
+        child: SingleChildScrollView(
+          child: Column(
+            children: [
+              const SizedBox(
+                height: 50,
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  GestureDetector(
+                    onTap: () {
+                      Navigator.pop(context);
+                    },
+                    child: const Icon(
+                      Icons.arrow_back_ios,
                       color: Colors.grey,
+                      size: 20,
                     ),
-                    borderRadius: BorderRadius.circular(5.0),
                   ),
-                  child: Center(
-                    child: Image.asset(
-                      "assets/filterIcon.png",
-                      width: 20,
-                      height: 20,
-                      color: purpleColor,
+                  Text(
+                    "Cancelled Appointments",
+                    style: twentyTwo700TextStyle(color: purpleColor),
+                  ),
+                  const SizedBox(
+                    width: 20,
+                  ),
+                ],
+              ),
+              const SizedBox(
+                height: 20,
+              ),
+              Align(
+                alignment: Alignment.centerRight,
+                child: GestureDetector(
+                  onTap: () {
+                    showCancelledPopUp(context);
+                  },
+                  child: Container(
+                    width: 30,
+                    height: 30,
+                    decoration: BoxDecoration(
+                      border: Border.all(
+                        color: Colors.grey,
+                      ),
+                      borderRadius: BorderRadius.circular(5.0),
+                    ),
+                    child: Center(
+                      child: Image.asset(
+                        "assets/filterIcon.png",
+                        width: 20,
+                        height: 20,
+                        color: purpleColor,
+                      ),
                     ),
                   ),
                 ),
               ),
-            ),
-            Column(
-              children: [
-                const SizedBox(
-                  height: 20,
-                ),
-                CancelledAppointmentWidget(
-                  count: 3,
-                  onTap: () {
-                    Navigator.pushNamed(
-                        context, cancelledAppointmentDetailsScreenRoute);
-                  },
-                ),
-              ],
-            ),
-          ],
+              Column(
+                children: [
+                  const SizedBox(
+                    height: 20,
+                  ),
+                  FutureBuilder<List<AppointmentModel>>(
+                    future: futureAppointments,
+                    builder: (context, snapshot) {
+                      if (snapshot.connectionState == ConnectionState.waiting) {
+                        return Center(child: CircularProgressIndicator());
+                      } else if (snapshot.hasError) {
+                        return Center(child: Text('Error: ${snapshot.error}'));
+                      } else if (snapshot.data!.length == 0) {
+                        return Center(
+                            child: Text('There is no Appointment Avaiable!'));
+                      } else {
+                        List<AppointmentModel> appointments =
+                            snapshot.data ?? [];
+                        print(snapshot.data);
+                        return CancelledAppointmentWidget(
+                          count: appointments.length,
+                          appointment: appointments,
+                        );
+                      }
+                    },
+                  ),
+
+                  // CancelledAppointmentWidget(
+                  //   count: 3,
+                  //   onTap: () {
+                  //     Navigator.pushNamed(
+                  //         context, cancelledAppointmentDetailsScreenRoute);
+                  //   },
+                  // ),
+                ],
+              ),
+            ],
+          ),
         ),
       ),
     );
