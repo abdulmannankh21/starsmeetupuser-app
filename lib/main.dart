@@ -5,6 +5,7 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
+import 'package:get_storage/get_storage.dart';
 import 'package:starsmeetupuser/video_call_screen_test.dart';
 
 import 'LocalStorage/shared_preferences.dart';
@@ -46,6 +47,7 @@ Future<void> main() async {
   await Firebase.initializeApp();
   FirebaseMessaging messaging = FirebaseMessaging.instance;
   await MyPreferences.instance.init();
+  await GetStorage.init();
   runApp(const MyApp());
 }
 

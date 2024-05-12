@@ -79,32 +79,32 @@ class _CancelledAppointmentScreenState
               const SizedBox(
                 height: 20,
               ),
-              Align(
-                alignment: Alignment.centerRight,
-                child: GestureDetector(
-                  onTap: () {
-                    showCancelledPopUp(context);
-                  },
-                  child: Container(
-                    width: 30,
-                    height: 30,
-                    decoration: BoxDecoration(
-                      border: Border.all(
-                        color: Colors.grey,
-                      ),
-                      borderRadius: BorderRadius.circular(5.0),
-                    ),
-                    child: Center(
-                      child: Image.asset(
-                        "assets/filterIcon.png",
-                        width: 20,
-                        height: 20,
-                        color: purpleColor,
-                      ),
-                    ),
-                  ),
-                ),
-              ),
+              // Align(
+              //   alignment: Alignment.centerRight,
+              //   child: GestureDetector(
+              //     onTap: () {
+              //       showCancelledPopUp(context);
+              //     },
+              //     child: Container(
+              //       width: 30,
+              //       height: 30,
+              //       decoration: BoxDecoration(
+              //         border: Border.all(
+              //           color: Colors.grey,
+              //         ),
+              //         borderRadius: BorderRadius.circular(5.0),
+              //       ),
+              //       child: Center(
+              //         child: Image.asset(
+              //           "assets/filterIcon.png",
+              //           width: 20,
+              //           height: 20,
+              //           color: purpleColor,
+              //         ),
+              //       ),
+              //     ),
+              //   ),
+              // ),
               Column(
                 children: [
                   const SizedBox(

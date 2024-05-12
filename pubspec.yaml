@@ -69,6 +69,7 @@ dependencies:
   calendar_date_picker2: ^1.0.1
   firebase_messaging: ^14.9.1
   custom_date_range_picker: ^1.0.10
+  get_storage:
 
 dev_dependencies:
   flutter_test:
