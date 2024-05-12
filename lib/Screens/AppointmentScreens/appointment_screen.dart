@@ -86,7 +86,7 @@ class _AppointmentScreenState extends State<AppointmentScreen>
   Future<List<AppointmentModel>> _loadAppointments() async {
     User? user = FirebaseAuth.instance.currentUser;
     print(user!.email!);
-    return _appointmentService.getAppointmentsByStatus(user!.email!,"Created");
+    return _appointmentService.getAppointmentsByUserId(user!.email!);
   }
 
   Future<List<AppointmentModel>> _loadAppointmentsThisMonth() async {
@@ -702,10 +702,10 @@ class _AppointmentScreenState extends State<AppointmentScreen>
     showCustomDateRangePicker(
       context,
       dismissible: true,
-      minimumDate: DateTime.now().subtract(const Duration(days: 7)),
-      maximumDate: DateTime.now().add(const Duration(days: 7)),
-      endDate: DateTime.now().add(Duration(days: 7)),
-      startDate: DateTime.now(),
+      minimumDate: DateTime.now().subtract(const Duration(days: 365)),
+      maximumDate: DateTime.now().add(const Duration(days: 365)),
+      endDate: DateTime.now(),
+      startDate: DateTime.now().subtract(Duration(days: 7)),
       backgroundColor: Colors.white,
       primaryColor: purpleColor,
       onApplyClick: (start, end) {

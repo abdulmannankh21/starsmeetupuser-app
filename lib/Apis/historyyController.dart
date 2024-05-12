@@ -30,7 +30,7 @@ class HistoryController extends GetxController {
           .where((appointment) {
         // Parse creationTimestamp string to DateTime object
         DateTime creationTimestamp =
-            DateTime.parse(appointment.creationTimestamp.toString());
+            DateTime.parse(appointment.startTime.toString());
         // Check if creationTimestamp is within the current month
         return creationTimestamp.isAfter(startOfMonth) &&
             creationTimestamp.isBefore(endOfMonth);
@@ -70,7 +70,7 @@ class HistoryController extends GetxController {
           .where((appointment) {
         // Parse creationTimestamp string to DateTime object
         DateTime creationTimestamp =
-            DateTime.parse(appointment.creationTimestamp.toString());
+            DateTime.parse(appointment.startTime.toString());
         // Check if creationTimestamp is within the current year
         return creationTimestamp.isAfter(startOfYear) &&
             creationTimestamp.isBefore(endOfYear);
@@ -128,7 +128,7 @@ class HistoryController extends GetxController {
           .where((appointment) {
         // Parse creationTimestamp string to DateTime object
         DateTime creationTimestamp =
-            DateTime.parse(appointment.creationTimestamp.toString());
+            DateTime.parse(appointment.startTime.toString());
         // Check if creationTimestamp is within the current year
         return creationTimestamp.isAfter(startOfYear) &&
             creationTimestamp.isBefore(endOfYear);

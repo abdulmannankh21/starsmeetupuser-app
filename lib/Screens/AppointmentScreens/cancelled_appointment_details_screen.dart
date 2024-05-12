@@ -1,10 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:get/get_connect/http/src/request/request.dart';
+import 'package:intl/intl.dart';
+import 'package:starsmeetupuser/models/appointment_model.dart';
 
 import '../../Utilities/app_colors.dart';
 import '../../Utilities/app_text_styles.dart';
 
 class CancelledAppointmentDetailsScreen extends StatefulWidget {
-  const CancelledAppointmentDetailsScreen({super.key});
+  AppointmentModel appointmentModel = AppointmentModel();
+  CancelledAppointmentDetailsScreen(
+      {super.key, required this.appointmentModel});
 
   @override
   State<CancelledAppointmentDetailsScreen> createState() =>
@@ -59,9 +64,9 @@ class _CancelledAppointmentDetailsScreenState
                 height: 240,
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(10.0),
-                  image: const DecorationImage(
-                    image: AssetImage(
-                      "assets/celebrityImage.png",
+                  image: DecorationImage(
+                    image: NetworkImage(
+                      "${widget.appointmentModel.celebrityImage}",
                     ),
                     fit: BoxFit.cover,
                   ),
@@ -73,7 +78,7 @@ class _CancelledAppointmentDetailsScreenState
             ),
             Center(
               child: Text(
-                "Hamza Ali Abbasi",
+                "${widget.appointmentModel.celebrityName}",
                 style: twentyTwo700TextStyle(color: purpleColor),
               ),
             ),
@@ -99,15 +104,15 @@ class _CancelledAppointmentDetailsScreenState
                     style: twentyTwo700TextStyle(color: purpleColor),
                   ),
                   Text(
-                    "Time: 12:10 AM",
+                    "Time: ${DateFormat('h:mm a').format(widget.appointmentModel.startTime!)}-${DateFormat('h:mm a').format(widget.appointmentModel.endTime!)}",
                     style: twenty600TextStyle(color: darkGreyColor),
                   ),
                   Text(
-                    "Date: 12-May-2024",
+                    "Date: ${DateFormat('dd-MMM-yy').format(widget.appointmentModel.selectedDate!)}",
                     style: twenty600TextStyle(color: darkGreyColor),
                   ),
                   Text(
-                    "Meeting Type: Audio Meeting",
+                    "Meeting Type: ${widget.appointmentModel.serviceName}",
                     style: twenty600TextStyle(color: darkGreyColor),
                   ),
                 ],
@@ -130,11 +135,11 @@ class _CancelledAppointmentDetailsScreenState
                     style: twenty600TextStyle(color: darkGreyColor),
                   ),
                   Text(
-                    "Meeting Type: Audio Meeting",
+                    "Meeting Type: ${widget.appointmentModel.serviceName}",
                     style: twenty600TextStyle(color: darkGreyColor),
                   ),
                   Text(
-                    "Paid Amount: Rs. 6,000",
+                    "Paid Amount:  ${widget.appointmentModel.servicePrice}",
                     style: twenty600TextStyle(color: darkGreyColor),
                   ),
                   Text(
@@ -171,10 +176,11 @@ class _CancelledAppointmentDetailsScreenState
             Container(
               width: MediaQuery.of(context).size.width,
               height: 400,
-              decoration: const BoxDecoration(
+              decoration: BoxDecoration(
                 color: Colors.grey,
                 image: DecorationImage(
-                  image: AssetImage("assets/celebrityImage.png"),
+                  image:
+                      NetworkImage("${widget.appointmentModel.celebrityImage}"),
                   fit: BoxFit.cover,
                 ),
               ),

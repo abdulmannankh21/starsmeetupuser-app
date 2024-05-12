@@ -505,7 +505,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                   appointment!.creationTimestamp =
                       DateFormat('yyyy-MM-dd').format(DateTime.now());
                   appointment!.promoCode = promoCodeController.text;
-                  appointment!.status = "Created";
+                  appointment!.status = "active";
 
                   await AppointmentService()
                       .uploadAppointment(appointment!)
@@ -516,7 +516,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                       EasyLoading.showSuccess(
                           "Appointment Created Successfully!");
                       Navigator.pushNamedAndRemoveUntil(
-                          context, homeScreenRoute, (route) => true,
+                          context, homeScreenRoute, (route) => false,
                           arguments: true);
                     });
                   });
