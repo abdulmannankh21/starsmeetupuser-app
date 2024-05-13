@@ -24,9 +24,14 @@ class AppointmentService {
           .where("status", isEqualTo: "active")
           .get();
       log("i am here: ${querySnapshot.docs.length}");
-      return querySnapshot.docs
+      List<AppointmentModel> appointments = querySnapshot.docs
           .map((doc) => AppointmentModel.fromJson(doc.data()))
           .toList();
+
+      // Sort the appointments based on their start times
+      appointments.sort((a, b) => a.startTime!.compareTo(b.startTime!));
+
+      return appointments;
     } catch (e) {
       print('Error getting appointments by user ID: $e');
       // Handle error accordingly
@@ -59,6 +64,9 @@ class AppointmentService {
         return creationTimestamp.isAfter(startOfMonth) &&
             creationTimestamp.isBefore(endOfMonth);
       }).toList();
+
+      // Sort the appointments based on their start times
+      appointments.sort((a, b) => a.startTime!.compareTo(b.startTime!));
 
       log("Appointments for user ID $userId for current month: ${appointments.length}");
 
@@ -100,6 +108,7 @@ class AppointmentService {
             creationTimestamp.isBefore(endOfYear);
       }).toList();
 
+      appointments.sort((a, b) => a.startTime!.compareTo(b.startTime!));
       log("Appointments for user ID $userId for current year: ${appointments.length}");
 
       // Print data from each document
@@ -216,7 +225,7 @@ class AppointmentService {
       QuerySnapshot<Map<String, dynamic>> querySnapshot = await _firestore
           .collection('appointments')
           .where('userId', isEqualTo: userId)
-          .where("timeSlotId", isEqualTo: tomeSoltId)
+          .where("creationTimestamp", isEqualTo: tomeSoltId)
           .where("status", isEqualTo: "active")
           .get();
 

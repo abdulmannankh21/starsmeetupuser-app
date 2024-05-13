@@ -333,7 +333,7 @@ class _UpcomingVideoAppointmentDetailsScreenState
                                 _appointmentService
                                     .cancelAppointmentsByUserId(
                                         widget.appointment.userId!,
-                                        widget.appointment.timeSlotId!)
+                                        widget.appointment.creationTimestamp!)
                                     .whenComplete(() {
                                   Navigator.pop(context);
                                   Navigator.pop(context);

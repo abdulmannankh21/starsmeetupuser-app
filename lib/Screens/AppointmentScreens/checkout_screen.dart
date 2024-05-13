@@ -502,8 +502,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                 text: "Complete Payment",
                 onTap: () async {
                   EasyLoading.show(status: "Loading...");
-                  appointment!.creationTimestamp =
-                      DateFormat('yyyy-MM-dd').format(DateTime.now());
+                  appointment!.creationTimestamp = DateTime.now().toString();
                   appointment!.promoCode = promoCodeController.text;
                   appointment!.status = "active";
 
