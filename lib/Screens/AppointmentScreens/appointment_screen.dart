@@ -6,6 +6,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get/instance_manager.dart';
+import 'package:get_storage/get_storage.dart';
 import 'package:intl/intl.dart';
 import 'package:starsmeetupuser/Apis/historyyController.dart';
 import 'package:starsmeetupuser/Screens/AppointmentScreens/upcoming_audio_appointment_details_screen.dart';
@@ -114,9 +115,13 @@ class _AppointmentScreenState extends State<AppointmentScreen>
     return _appointmentService.getAppointmentsByUserIdwithYear(user!.email!);
   }
 
+  String? Range;
+
   @override
   void initState() {
     super.initState();
+    // Range =
+    //     "${DateFormat('dd-MMM-yy').format(GetStorage().read("startDate"))} - ${DateFormat('dd-MMM-yy').format(GetStorage().read("endDate"))}" ?? "";
     _tabController = TabController(length: 2, vsync: this);
     futureAppointments = _loadAppointments().whenComplete(() {
       futureHistory = _loadHistory();
@@ -201,8 +206,9 @@ class _AppointmentScreenState extends State<AppointmentScreen>
               ),
             ),
             const SizedBox(
-              height: 20,
+              height: 10,
             ),
+            Range != null ? Text("Date Range: ${Range}") :Text(""),
             Align(
               alignment: Alignment.centerRight,
               child: GestureDetector(
@@ -719,6 +725,12 @@ class _AppointmentScreenState extends State<AppointmentScreen>
               futureHistory = _loadHistoryeithCustom(start!, end!);
               //
             }
+            // GetStorage().write("startDate", start);
+            // GetStorage().write("endDate", end);
+            setState(() {
+              Range =
+                  "${DateFormat('dd-MMM-yy').format(start)} / ${DateFormat('dd-MMM-yy').format(end)}";
+            });
             Navigator.pop(context);
             setState(() {});
           }
@@ -751,35 +763,34 @@ class _AppointmentScreenState extends State<AppointmentScreen>
     //
   }
 
-  // Future<void> _selectDate(BuildContext context, String type) async {
-  //   Navigator.pop(context);
+// Future<void> _selectDate(BuildContext context, String type) async {
+//   Navigator.pop(context);
 
-  //   final pickedDateRange = await showDateRangePicker(
+//   final pickedDateRange = await showDateRangePicker(
 
-  //     context: context,
-  //     firstDate: DateTime.now().subtract(Duration(days: 365)),
-  //     lastDate: DateTime.now(),
-  //     initialDateRange: DateTimeRange(
-  //       start: DateTime.now().subtract(Duration(days: 7)),
-  //       end: DateTime.now(),
-  //     ),
-  //   );
+//     context: context,
+//     firstDate: DateTime.now().subtract(Duration(days: 365)),
+//     lastDate: DateTime.now(),
+//     initialDateRange: DateTimeRange(
+//       start: DateTime.now().subtract(Duration(days: 7)),
+//       end: DateTime.now(),
+//     ),
+//   );
 
-
-  //   if (pickedDateRange != null) {
-  //     print(
-  //         'Selected date range: ${pickedDateRange.start} this to${pickedDateRange.end}');
-  //     if (type == "upComing") {
-  //       futureAppointments = _loadAppointmentWithCustom(
-  //           pickedDateRange.start, pickedDateRange.end);
-  //       // upcomingSelectedDays = "${pickedDateRange.start} ${pickedDateRange.end}";
-  //       // Get.back();
-  //     } else {
-  //       futureHistory =
-  //           _loadHistoryeithCustom(pickedDateRange.start, pickedDateRange.end);
-  //       //
-  //     }
-  //     setState(() {});
-  //   }
-  // }
+//   if (pickedDateRange != null) {
+//     print(
+//         'Selected date range: ${pickedDateRange.start} this to${pickedDateRange.end}');
+//     if (type == "upComing") {
+//       futureAppointments = _loadAppointmentWithCustom(
+//           pickedDateRange.start, pickedDateRange.end);
+//       // upcomingSelectedDays = "${pickedDateRange.start} ${pickedDateRange.end}";
+//       // Get.back();
+//     } else {
+//       futureHistory =
+//           _loadHistoryeithCustom(pickedDateRange.start, pickedDateRange.end);
+//       //
+//     }
+//     setState(() {});
+//   }
+// }
 }
