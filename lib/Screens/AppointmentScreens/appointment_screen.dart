@@ -208,7 +208,7 @@ class _AppointmentScreenState extends State<AppointmentScreen>
             const SizedBox(
               height: 10,
             ),
-            Range != null ? Text("Date Range: ${Range}") :Text(""),
+            Range != null ? Text("Date Range: ${Range}") : Text(""),
             Align(
               alignment: Alignment.centerRight,
               child: GestureDetector(
@@ -479,6 +479,7 @@ class _AppointmentScreenState extends State<AppointmentScreen>
                                 if (upcomingSelectedDays == "Custom") {
                                   _selectDate(context, "upComing");
                                 }
+                                Range = null;
                               });
                             },
                             items: upcomingDays

@@ -1,10 +1,14 @@
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
+import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:starsmeetupuser/Apis/appointment_apis.dart';
 import 'package:starsmeetupuser/Screens/AppointmentScreens/appointment_screen.dart';
 import 'package:starsmeetupuser/Utilities/app_routes.dart';
+import 'package:starsmeetupuser/chat/audio_Calls.dart';
+import 'package:starsmeetupuser/chat/calls.dart';
 import 'package:starsmeetupuser/models/appointment_model.dart';
 
 import '../../GlobalWidgets/button_widget.dart';
@@ -106,7 +110,12 @@ class _UpcomingAudioAppointmentDetailsScreenState
                 color: purpleColor,
                 text: "Join Meeting",
                 onTap: () {
-                  Navigator.pushNamed(context, audioCallingScreenRoute);
+                  // Navigator.pushNamed(context, audioCallingScreenRoute);
+
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => AudioCalls()),
+                  );
                 },
                 textStyle: twentyTwo700TextStyle(color: Colors.white),
               ),
@@ -224,21 +233,26 @@ class _UpcomingAudioAppointmentDetailsScreenState
             const SizedBox(
               height: 20,
             ),
-            Container(
-              width: MediaQuery.of(context).size.width,
-              height: 400,
-              decoration: BoxDecoration(
-                color: Colors.grey,
-                image: DecorationImage(
-                  image: NetworkImage("${widget.appointment.celebrityImage}"),
-                  fit: BoxFit.cover,
+            GestureDetector(
+              onTap: () {
+                // Get.to(() => AgoraCalls());
+              },
+              child: Container(
+                width: MediaQuery.of(context).size.width,
+                height: 400,
+                decoration: BoxDecoration(
+                  color: Colors.grey,
+                  image: DecorationImage(
+                    image: NetworkImage("${widget.appointment.celebrityImage}"),
+                    fit: BoxFit.cover,
+                  ),
                 ),
-              ),
-              child: const Center(
-                child: Icon(
-                  Icons.play_circle_outline_rounded,
-                  color: Colors.white,
-                  size: 70,
+                child: const Center(
+                  child: Icon(
+                    Icons.play_circle_outline_rounded,
+                    color: Colors.white,
+                    size: 70,
+                  ),
                 ),
               ),
             ),

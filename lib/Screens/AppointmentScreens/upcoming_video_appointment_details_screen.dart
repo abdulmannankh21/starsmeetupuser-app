@@ -5,6 +5,8 @@ import 'package:intl/intl.dart';
 import 'package:starsmeetupuser/Apis/appointment_apis.dart';
 import 'package:starsmeetupuser/Screens/AppointmentScreens/appointment_screen.dart';
 import 'package:starsmeetupuser/Utilities/app_routes.dart';
+import 'package:starsmeetupuser/chat/audio_Calls.dart';
+import 'package:starsmeetupuser/chat/calls.dart';
 
 import '../../GlobalWidgets/button_widget.dart';
 import '../../Utilities/app_colors.dart';
@@ -105,7 +107,9 @@ class _UpcomingVideoAppointmentDetailsScreenState
                 color: purpleColor,
                 text: "Join Meeting",
                 onTap: () {
-                  Navigator.pushNamed(context, videoCallingScreenRoute);
+                  Navigator.push(context,
+                      MaterialPageRoute(builder: (context) => AgoraCalls()));
+                  // Navigator.pushNamed(context, videoCallingScreenRoute);
                 },
                 textStyle: twentyTwo700TextStyle(color: Colors.white),
               ),
