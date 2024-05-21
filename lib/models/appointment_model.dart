@@ -1,5 +1,6 @@
 class AppointmentModel {
   String? serviceDuration;
+  String? appointmentId;
   String? serviceName;
   String? servicePrice;
   String? celebrityName;
@@ -17,28 +18,32 @@ class AppointmentModel {
   String? paymentMethod;
   String? status;
 
-  AppointmentModel(
-      {this.serviceDuration,
-      this.serviceName,
-      this.servicePrice,
-      this.celebrityImage,
-      this.timeSlotId,
-      this.celebrityName,
-      this.celebrityId,
-      this.userId,
-      this.userName,
-      this.creationTimestamp,
-      this.startTime,
-      this.endTime,
-      this.selectedDate,
-      this.promoCode,
-      this.supportYourStarCharges,
-      this.paymentMethod,
-      this.status});
+  AppointmentModel({
+    this.serviceDuration,
+    this.appointmentId,
+    this.serviceName,
+    this.servicePrice,
+    this.celebrityImage,
+    this.timeSlotId,
+    this.celebrityName,
+    this.celebrityId,
+    this.userId,
+    this.userName,
+    this.creationTimestamp,
+    this.startTime,
+    this.endTime,
+    this.selectedDate,
+    this.promoCode,
+    this.supportYourStarCharges,
+    this.paymentMethod,
+    this.status,
+  });
 
-  factory AppointmentModel.fromJson(Map<String, dynamic> json) {
+  factory AppointmentModel.fromJson(
+      Map<String, dynamic> json, String documentId) {
     return AppointmentModel(
       serviceDuration: json['serviceTitle'],
+      appointmentId: documentId,
       serviceName: json['serviceName'],
       servicePrice: json['servicePrice'],
       celebrityName: json['celebrityName'],
@@ -80,7 +85,7 @@ class AppointmentModel {
       'promoCode': promoCode,
       'supportYourStarCharges': supportYourStarCharges,
       'paymentMethod': paymentMethod,
-      "status": status
+      'status': status,
     };
   }
 }

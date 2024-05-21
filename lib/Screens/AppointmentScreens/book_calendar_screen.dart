@@ -1,20 +1,19 @@
 // ignore_for_file: prefer_typing_uninitialized_variables, must_be_immutable
 
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:table_calendar/table_calendar.dart';
 
 import '../../Apis/appointment_apis.dart';
 import '../../Apis/time_availability_apis.dart';
-import '../../Constants/app_constants.dart';
 import '../../GlobalWidgets/button_widget.dart';
 import '../../Utilities/app_colors.dart';
 import '../../Utilities/app_routes.dart';
 import '../../Utilities/app_text_styles.dart';
 import '../../models/appointment_model.dart';
 import '../../models/time_availability_model.dart';
+import 'holiday_service.dart';
 
 class BookingCalendarScreen extends StatefulWidget {
   var data;
@@ -42,10 +41,12 @@ class _BookingCalendarScreenState extends State<BookingCalendarScreen> {
   }
 
   List<TimeSlot>? timeSlots;
+  bool isHoliday = false;
 
   void getCurrentDaySlots(int weekday) async {
     setState(() {
       timeSlots = [];
+      isHoliday = false;
     });
 
     List<AppointmentModel> dayAppointments = await AppointmentService()
@@ -63,14 +64,26 @@ class _BookingCalendarScreenState extends State<BookingCalendarScreen> {
         .getTimeAvailableForDay(
             appointment!.celebrityId!, weekdayToString(weekday));
 
-    List<TimeSlot> availableTimeSlots = allTimeSlots.where((slot) {
-      return !dayAppointments
-          .any((appointment) => appointment.timeSlotId == slot.id);
-    }).toList();
+    // Check if the selected day is a holiday
+    isHoliday = await HolidayService()
+        .isHoliday(selectedDay!, appointment!.celebrityId!);
 
-    setState(() {
-      timeSlots = availableTimeSlots;
-    });
+    if (isHoliday) {
+      setState(() {
+        timeSlots = [];
+        this.isHoliday = true;
+      });
+    } else {
+      List<TimeSlot> availableTimeSlots = allTimeSlots.where((slot) {
+        return !dayAppointments
+            .any((appointment) => appointment.timeSlotId == slot.id);
+      }).toList();
+
+      setState(() {
+        timeSlots = availableTimeSlots;
+        this.isHoliday = false;
+      });
+    }
   }
 
   String weekdayToString(int weekday) {
@@ -191,65 +204,60 @@ class _BookingCalendarScreenState extends State<BookingCalendarScreen> {
             const SizedBox(
               height: 20,
             ),
-            timeSlots == null
-                ? const Center(
-                    child: CupertinoActivityIndicator(),
-                  )
-                : timeSlots != null && timeSlots!.isEmpty
-                    ? const Column(
-                        children: [
-                          SizedBox(
-                            height: 30,
-                          ),
-                          Center(
-                            child: Text(
-                              "No Time Availability Added!",
+            if (isHoliday)
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Center(
+                  child: Text(
+                    "Time slots are not available for this date.",
+                    style: TextStyle(
+                      color: Colors.red,
+                      fontSize: 16,
+                    ),
+                  ),
+                ),
+              )
+            else
+              timeSlots == null
+                  ? const Center(
+                      child: CupertinoActivityIndicator(),
+                    )
+                  : timeSlots != null && timeSlots!.isEmpty
+                      ? const Column(
+                          children: [
+                            SizedBox(
+                              height: 30,
                             ),
-                          ),
-                          SizedBox(
-                            height: 20,
-                          ),
-                        ],
-                      )
-                    : Expanded(
-                        child: Center(
-                          child: SingleChildScrollView(
-                            child: Column(
-                              children: [
-                                Wrap(
-                                  alignment: WrapAlignment.spaceBetween,
-                                  crossAxisAlignment: WrapCrossAlignment.start,
-                                  runSpacing: 10.0,
-                                  spacing: 10.0,
-                                  children: [
-                                    for (int i = 0; i < timeSlots!.length; i++)
-                                      GestureDetector(
-                                        onTap: () {
-                                          if (selectedTime != i) {
-                                            selectedTime = i;
-                                            startTime =
-                                                convertTimeStringToDateTime(
-                                                    selectedDay!.year,
-                                                    selectedDay!.month,
-                                                    selectedDay!.day,
-                                                    timeSlots![i].startTime);
-                                            endTime =
-                                                convertTimeStringToDateTime(
-                                                    selectedDay!.year,
-                                                    selectedDay!.month,
-                                                    selectedDay!.day,
-                                                    timeSlots![i].endTime);
-                                            appointment!.timeSlotId =
-                                                timeSlots![i].id;
-                                          } else {
-                                            selectedTime = -1;
-                                            startTime = null;
-                                            endTime = null;
-                                          }
-
-                                          setState(() {});
-                                        },
-                                        child: Container(
+                            Center(
+                              child: Text(
+                                "Time slots are not available for this date.",
+                                style: TextStyle(
+                                  color: Colors.red,
+                                  fontSize: 16,
+                                ),
+                              ),
+                            ),
+                            SizedBox(
+                              height: 20,
+                            ),
+                          ],
+                        )
+                      : Expanded(
+                          child: Center(
+                            child: SingleChildScrollView(
+                              child: Column(
+                                children: [
+                                  Wrap(
+                                    alignment: WrapAlignment.spaceBetween,
+                                    crossAxisAlignment:
+                                        WrapCrossAlignment.start,
+                                    runSpacing: 10.0,
+                                    spacing: 10.0,
+                                    children: [
+                                      for (int i = 0;
+                                          i < timeSlots!.length;
+                                          i++)
+                                        Container(
                                           width: MediaQuery.of(context)
                                                   .size
                                                   .width *
@@ -262,23 +270,50 @@ class _BookingCalendarScreenState extends State<BookingCalendarScreen> {
                                             borderRadius:
                                                 BorderRadius.circular(10.0),
                                           ),
-                                          child: Center(
-                                            child: Text(
-                                              timeSlots![i].startTime,
-                                              style: sixteen600TextStyle(
-                                                color: Colors.white,
+                                          child: GestureDetector(
+                                            onTap: () {
+                                              if (selectedTime != i) {
+                                                selectedTime = i;
+                                                startTime =
+                                                    convertTimeStringToDateTime(
+                                                        selectedDay!.year,
+                                                        selectedDay!.month,
+                                                        selectedDay!.day,
+                                                        timeSlots![i]
+                                                            .startTime);
+                                                endTime =
+                                                    convertTimeStringToDateTime(
+                                                        selectedDay!.year,
+                                                        selectedDay!.month,
+                                                        selectedDay!.day,
+                                                        timeSlots![i].endTime);
+                                                appointment!.timeSlotId =
+                                                    timeSlots![i].id;
+                                              } else {
+                                                selectedTime = -1;
+                                                startTime = null;
+                                                endTime = null;
+                                              }
+
+                                              setState(() {});
+                                            },
+                                            child: Center(
+                                              child: Text(
+                                                timeSlots![i].startTime,
+                                                style: sixteen600TextStyle(
+                                                  color: Colors.white,
+                                                ),
                                               ),
                                             ),
                                           ),
-                                        ),
-                                      )
-                                  ],
-                                ),
-                              ],
+                                        )
+                                    ],
+                                  ),
+                                ],
+                              ),
                             ),
                           ),
                         ),
-                      ),
             const SizedBox(
               height: 20,
             ),
@@ -308,4 +343,20 @@ class _BookingCalendarScreenState extends State<BookingCalendarScreen> {
       ),
     );
   }
+}
+
+DateTime convertTimeStringToDateTime(
+    int year, int month, int day, String timeString) {
+  final components = timeString.split(' ');
+  final timeComponents = components[0].split(':');
+  var hour = int.parse(timeComponents[0]);
+  final minute = int.parse(timeComponents[1]);
+  final period = components[1];
+
+  // Adjust hour for PM period
+  if (period == 'PM' && hour != 12) {
+    hour += 12;
+  }
+
+  return DateTime(year, month, day, hour, minute);
 }

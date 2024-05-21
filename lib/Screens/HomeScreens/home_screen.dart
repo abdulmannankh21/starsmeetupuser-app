@@ -9,12 +9,14 @@ import 'package:starsmeetupuser/Utilities/app_colors.dart';
 import 'package:starsmeetupuser/Utilities/app_text_styles.dart';
 
 import '../../Apis/celebrities_apis.dart';
+import '../../Apis/notificationController.dart';
 import '../../GlobalWidgets/categories_widget.dart';
 import '../../GlobalWidgets/celebrity_widget.dart';
 import '../../GlobalWidgets/home_category_and_featured_widget.dart';
 import '../../GlobalWidgets/side_drawer_widget.dart';
 import '../../Utilities/app_routes.dart';
 import '../../models/celebrity_model.dart';
+import 'package:get/get.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -25,6 +27,7 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+  NotificationController controller = Get.put(NotificationController());
   List<String> categories = [
     "Creators",
     "Comedians",
@@ -73,16 +76,26 @@ class _HomeScreenState extends State<HomeScreen> {
       colors: [Color(0xff09203F), Color(0xff537895)],
     ),
   ];
+
   void openDrawer() {
     _scaffoldKey.currentState!.openDrawer();
   }
 
   List<CelebrityModel>? celebrities;
+  int notificationCount = 0;
 
   @override
   void initState() {
     getCelebritiesList();
+    _getNotificationCount();
     super.initState();
+  }
+
+  Future<void> _getNotificationCount() async {
+    int count = await controller.getNotificationCount();
+    setState(() {
+      notificationCount = count;
+    });
   }
 
   getCelebritiesList() async {
@@ -149,13 +162,42 @@ class _HomeScreenState extends State<HomeScreen> {
                         onTap: () {
                           Navigator.pushNamed(
                               context, notificationsScreenRoute);
+                          setState(() {
+                            notificationCount = 0;
+                          });
                           // print(
                           //     "this is date only: ${DateFormat('yyyy-MM-dd').format(DateTime.now())}");
                         },
-                        child: Image.asset(
-                          "assets/notificationsIcon.png",
-                          width: 20,
-                          height: 20,
+                        child:
+                            Stack(
+                          children: [
+                            Icon(
+                              Icons.notifications_active_outlined,
+                              size: 30.0,
+                            ),
+                            notificationCount == 0
+                                ? SizedBox()
+                                : Padding(
+                                    padding: const EdgeInsets.only(left: 20.0),
+                                    child: AnimatedContainer(
+                                    
+                                      decoration: BoxDecoration(
+                                        shape: BoxShape.circle,
+                                        color: Color(0xffDC1818),
+                                      ),
+                                      duration: Duration(microseconds:20),
+                                      child: Center(
+                                        child: Padding(
+                                          padding: const EdgeInsets.all(2.0),
+                                          child: Text(
+                                            '${notificationCount}',
+                                            style: TextStyle(color: Colors.white,fontSize: 9),
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  )
+                          ],
                         ),
                       )
                     : GestureDetector(

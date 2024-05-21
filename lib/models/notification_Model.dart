@@ -2,6 +2,7 @@ class NotificationModel {
   String? serviceName;
   String? celebrityName;
   String? userId;
+  String? celebrityId;
   String? userName;
   DateTime? creationTimestamp;
 
@@ -10,6 +11,7 @@ class NotificationModel {
       {this.serviceName,
       this.celebrityName,
       this.userId,
+      this.celebrityId,
       this.userName,
       this.creationTimestamp,
       this.status});
@@ -19,6 +21,7 @@ class NotificationModel {
       serviceName: json['serviceName'],
       celebrityName: json['celebrityName'],
       userId: json['userId'],
+      celebrityId: json['celebrityId'],
       userName: json['userName'],
       creationTimestamp: json['creationTimestamp'] != null
           ? DateTime.parse(json['creationTimestamp'])
@@ -32,6 +35,7 @@ class NotificationModel {
       'serviceName': serviceName,
       'celebrityName': celebrityName,
       'userId': userId,
+      'celebrityId': celebrityId,
       'userName': userName,
       'creationTimestamp': creationTimestamp?.toIso8601String(),
       "status": status

@@ -313,13 +313,14 @@ class _AppointmentScreenState extends State<AppointmentScreen>
                         child: FutureBuilder<List<HistoryModel>>(
                           future: futureHistory,
                           builder: (context, snapshot) {
+
                             if (snapshot.connectionState ==
                                 ConnectionState.waiting) {
                               return Center(child: CircularProgressIndicator());
                             } else if (snapshot.hasError) {
                               return Center(
                                   child: Text('Error: ${snapshot.error}'));
-                            } else if (snapshot.data!.length == 0) {
+                            } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
                               return Center(
                                   child: Text(
                                       'There is no Appointment Avaiable!'));
@@ -712,7 +713,7 @@ class _AppointmentScreenState extends State<AppointmentScreen>
       minimumDate: DateTime.now().subtract(const Duration(days: 365)),
       maximumDate: DateTime.now().add(const Duration(days: 365)),
       endDate: DateTime.now(),
-      startDate: DateTime.now().subtract(Duration(days: 7)),
+      startDate: DateTime.now(),
       backgroundColor: Colors.white,
       primaryColor: purpleColor,
       onApplyClick: (start, end) {

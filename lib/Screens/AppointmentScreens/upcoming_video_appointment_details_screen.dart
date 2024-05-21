@@ -1,17 +1,19 @@
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:get/get_core/src/get_main.dart';
 import 'package:intl/intl.dart';
 import 'package:starsmeetupuser/Apis/appointment_apis.dart';
 import 'package:starsmeetupuser/Screens/AppointmentScreens/appointment_screen.dart';
-import 'package:starsmeetupuser/Utilities/app_routes.dart';
-import 'package:starsmeetupuser/chat/audio_Calls.dart';
-import 'package:starsmeetupuser/chat/calls.dart';
 
+import '../../Apis/notificationController.dart';
 import '../../GlobalWidgets/button_widget.dart';
 import '../../Utilities/app_colors.dart';
 import '../../Utilities/app_text_styles.dart';
+import '../../chat/message_screen.dart';
 import '../../models/appointment_model.dart';
+import '../../models/notification_Model.dart';
 
 class UpcomingVideoAppointmentDetailsScreen extends StatefulWidget {
   AppointmentModel appointment = AppointmentModel();
@@ -27,9 +29,32 @@ class _UpcomingVideoAppointmentDetailsScreenState
     extends State<UpcomingVideoAppointmentDetailsScreen> {
   final AppointmentService _appointmentService = AppointmentService();
   bool value = true;
+  NotificationController controller = Get.put(NotificationController());
+  late NotificationModel notification;
+  AppointmentModel? appointment;
+
+  assignModel() {
+    log("this is data:${widget.appointment}");
+    appointment = widget.appointment as AppointmentModel;
+    print("widget ${widget.appointment}");
+    Map<String, dynamic> datee = {
+      "serviceName": appointment!.serviceName,
+      "celebrityName": appointment!.celebrityName,
+      "celebrityId": appointment!.celebrityId,
+      "userId": appointment!.userId,
+      "userName": appointment!.userName,
+      "creationTimestamp": DateTime.now().toString(),
+      "status": "cancelled",
+    };
+    notification = NotificationModel.fromJson(datee);
+
+    // log("this is map data; ${notification.celebrityName}");
+    setState(() {});
+  }
   @override
   void initState() {
     // TODO: implement initState
+    assignModel();
     super.initState();
     log("this is video deatls screen: ${widget.appointment.celebrityImage}");
   }
@@ -107,8 +132,16 @@ class _UpcomingVideoAppointmentDetailsScreenState
                 color: purpleColor,
                 text: "Join Meeting",
                 onTap: () {
-                  Navigator.push(context,
-                      MaterialPageRoute(builder: (context) => AgoraCalls()));
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => ChatPage(
+                              meetingId: widget.appointment.appointmentId!,
+                              appointment: widget.appointment,
+                            )),
+                  );
+                  // Navigator.push(context,
+                  //     MaterialPageRoute(builder: (context) => AgoraCalls()));
                   // Navigator.pushNamed(context, videoCallingScreenRoute);
                 },
                 textStyle: twentyTwo700TextStyle(color: Colors.white),
@@ -126,12 +159,13 @@ class _UpcomingVideoAppointmentDetailsScreenState
                     "Meeting Details",
                     style: twentyTwo700TextStyle(color: purpleColor),
                   ),
+                  // -${DateFormat('h:mm a').format(widget.appointment.endTime!)}
                   Text(
-                    "Time: ${DateFormat('h:mm a').format(widget.appointment.startTime!)}-${DateFormat('h:mm a').format(widget.appointment.endTime!)}",
+                    "Time: ${DateFormat('h:mm a').format(widget.appointment.startTime!)}",
                     style: twenty600TextStyle(color: darkGreyColor),
                   ),
                   Text(
-                    "Date: ${DateFormat('dd-MMM-yy').format(widget.appointment.selectedDate!)}",
+                    "Date: ${DateFormat('dd-MMM-yyyy').format(widget.appointment.selectedDate!)}",
                     style: twenty600TextStyle(color: darkGreyColor),
                   ),
                   Text(
@@ -155,10 +189,6 @@ class _UpcomingVideoAppointmentDetailsScreenState
                   ),
                   Text(
                     "Order#124124",
-                    style: twenty600TextStyle(color: darkGreyColor),
-                  ),
-                  Text(
-                    "Meeting Type: ${widget.appointment.serviceName}",
                     style: twenty600TextStyle(color: darkGreyColor),
                   ),
                   Text(
@@ -336,18 +366,22 @@ class _UpcomingVideoAppointmentDetailsScreenState
                               onTap: () {
                                 _appointmentService
                                     .cancelAppointmentsByUserId(
-                                        widget.appointment.userId!,
-                                        widget.appointment.creationTimestamp!)
-                                    .whenComplete(() {
-                                  Navigator.pop(context);
-                                  Navigator.pop(context);
-                                  Navigator.pop(context);
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (context) =>
-                                            AppointmentScreen()),
-                                  );
+                                    widget.appointment.userId!,
+                                    widget.appointment.creationTimestamp!)
+                                    .then((value) async {
+                                  await controller
+                                      .uploadNotification(notification!)
+                                      .whenComplete(() {
+                                    Navigator.pop(context);
+                                    Navigator.pop(context);
+                                    Navigator.pop(context);
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) =>
+                                              AppointmentScreen()),
+                                    );
+                                  });
                                 });
                                 setState(() {});
                               },

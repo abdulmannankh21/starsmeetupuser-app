@@ -87,6 +87,7 @@ class _PrivacyPolicyScreenState extends State<PrivacyPolicyScreen> {
                                   ),
                                   Text(
                                     privacyPolicyText![i].description,
+                                    textAlign: TextAlign.justify,
                                     style: seventeen500TextStyle(
                                       color: Colors.grey[600],
                                     ),

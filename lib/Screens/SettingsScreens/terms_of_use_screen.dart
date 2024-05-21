@@ -91,6 +91,8 @@ class _TermsOfUseScreenState extends State<TermsOfUseScreen> {
                                   ),
                                   Text(
                                     termsAndConditionsText![i].description,
+                                    textAlign: TextAlign.justify,
+
                                     style: seventeen500TextStyle(
                                       color: Colors.grey[600],
                                     ),

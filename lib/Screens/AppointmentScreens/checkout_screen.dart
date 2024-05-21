@@ -2,9 +2,7 @@
 
 import 'dart:developer';
 
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
@@ -40,9 +38,11 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
   assignModel() {
     log("this is data:${widget.data}");
     appointment = widget.data as AppointmentModel;
+    print("widget ${widget.data}");
     Map<String, dynamic> datee = {
       "serviceName": appointment!.serviceName,
       "celebrityName": appointment!.celebrityName,
+      "celebrityId": appointment!.celebrityId,
       "userId": appointment!.userId,
       "userName": appointment!.userName,
       "creationTimestamp": DateTime.now().toString(),

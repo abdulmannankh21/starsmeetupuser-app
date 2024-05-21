@@ -25,8 +25,17 @@ class AppointmentService {
           .get();
       log("i am here: ${querySnapshot.docs.length}");
       List<AppointmentModel> appointments = querySnapshot.docs
-          .map((doc) => AppointmentModel.fromJson(doc.data()))
+          .map((doc) => AppointmentModel.fromJson(doc.data(), doc.id))
           .toList();
+
+      // Filter appointments into two groups: future and past
+      // DateTime currentDate = DateTime.now();
+      // List<AppointmentModel> futureAppointments = appointments
+      //     .where((appointment) => appointment.startTime!.isAfter(currentDate))
+      //     .toList();
+      // List<AppointmentModel> pastAppointments = appointments
+      //     .where((appointment) => appointment.startTime!.isBefore(currentDate))
+      //     .toList();
 
       // Sort the appointments based on their start times
       appointments.sort((a, b) => a.startTime!.compareTo(b.startTime!));
@@ -55,7 +64,7 @@ class AppointmentService {
           .get();
 
       List<AppointmentModel> appointments = querySnapshot.docs
-          .map((doc) => AppointmentModel.fromJson(doc.data()))
+          .map((doc) => AppointmentModel.fromJson(doc.data(), doc.id))
           .where((appointment) {
         // Parse creationTimestamp string to DateTime object
         DateTime creationTimestamp =
@@ -98,7 +107,7 @@ class AppointmentService {
           .get();
 
       List<AppointmentModel> appointments = querySnapshot.docs
-          .map((doc) => AppointmentModel.fromJson(doc.data()))
+          .map((doc) => AppointmentModel.fromJson(doc.data(), doc.id))
           .where((appointment) {
         // Parse creationTimestamp string to DateTime object
         DateTime creationTimestamp =
@@ -134,7 +143,7 @@ class AppointmentService {
           .get();
 
       return querySnapshot.docs
-          .map((doc) => AppointmentModel.fromJson(doc.data()))
+          .map((doc) => AppointmentModel.fromJson(doc.data(), doc.id))
           .toList();
     } catch (e) {
       print('Error getting appointments by celebrity ID: $e');
@@ -192,7 +201,7 @@ class AppointmentService {
           .where("status", isEqualTo: "active")
           .get();
       List<AppointmentModel> appointments = querySnapshot.docs
-          .map((doc) => AppointmentModel.fromJson(doc.data()))
+          .map((doc) => AppointmentModel.fromJson(doc.data(), doc.id))
           .where((appointment) {
         // Parse creationTimestamp string to DateTime object
         DateTime creationTimestamp =
@@ -255,12 +264,23 @@ class AppointmentService {
           .get();
       log("i am here: ${querySnapshot.docs.length}");
       return querySnapshot.docs
-          .map((doc) => AppointmentModel.fromJson(doc.data()))
+          .map((doc) => AppointmentModel.fromJson(doc.data(), doc.id))
           .toList();
     } catch (e) {
       print('Error getting appointments by user ID: $e');
       // Handle error accordingly
       return [];
     }
+  }
+
+  void _sortAppointmentsByStartTime(List<AppointmentModel> appointments,
+      {bool descending = false}) {
+    appointments.sort((a, b) {
+      if (descending) {
+        return b.startTime!.compareTo(a.startTime!);
+      } else {
+        return a.startTime!.compareTo(b.startTime!);
+      }
+    });
   }
 }

@@ -32,4 +32,14 @@ class NotificationController extends GetxController {
       return [];
     }
   }
+
+  Future<int> getNotificationCount() async {
+    try {
+      QuerySnapshot querySnapshot = await FirebaseFirestore.instance.collection('notification').get();
+      return querySnapshot.size;
+    } catch (e) {
+      print('Error getting document count: $e');
+      return 0;
+    }
+  }
 }
