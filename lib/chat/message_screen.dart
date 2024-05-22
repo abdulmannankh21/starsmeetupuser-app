@@ -1,6 +1,9 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:starsmeetupuser/chat/audio_Calls.dart';
+import 'package:starsmeetupuser/chat/audio_call_test.dart';
+import 'package:starsmeetupuser/chat/calls.dart';
 
 import '../../Utilities/app_colors.dart';
 import '../../Utilities/app_text_styles.dart';
@@ -60,6 +63,8 @@ class _ChatPageState extends State<ChatPage> {
                   icon: Icon(Icons.phone),
                   onPressed: () {
                     // Implement audio call action
+                    Navigator.push(context,
+                        MaterialPageRoute(builder: (context) => AudioCalls()));
                   },
                 )
               : SizedBox.shrink(),
@@ -68,6 +73,9 @@ class _ChatPageState extends State<ChatPage> {
                   icon: Icon(Icons.videocam),
                   onPressed: () {
                     // Implement video call action
+                    Navigator.push(context,
+                        MaterialPageRoute(builder: (context) => AgoraCalls()));
+                    // Navigator.pushNamed(context, videoCallingScreenRoute);
                   },
                 )
               : SizedBox.shrink(),

@@ -51,6 +51,7 @@ class _UpcomingVideoAppointmentDetailsScreenState
     // log("this is map data; ${notification.celebrityName}");
     setState(() {});
   }
+
   @override
   void initState() {
     // TODO: implement initState
@@ -140,9 +141,6 @@ class _UpcomingVideoAppointmentDetailsScreenState
                               appointment: widget.appointment,
                             )),
                   );
-                  // Navigator.push(context,
-                  //     MaterialPageRoute(builder: (context) => AgoraCalls()));
-                  // Navigator.pushNamed(context, videoCallingScreenRoute);
                 },
                 textStyle: twentyTwo700TextStyle(color: Colors.white),
               ),
@@ -366,8 +364,8 @@ class _UpcomingVideoAppointmentDetailsScreenState
                               onTap: () {
                                 _appointmentService
                                     .cancelAppointmentsByUserId(
-                                    widget.appointment.userId!,
-                                    widget.appointment.creationTimestamp!)
+                                        widget.appointment.userId!,
+                                        widget.appointment.creationTimestamp!)
                                     .then((value) async {
                                   await controller
                                       .uploadNotification(notification!)
