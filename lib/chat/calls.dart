@@ -20,7 +20,7 @@ class _AgoraCallsState extends State<AgoraCalls> {
   late RtcEngine _engine;
   final AgoraClient client = AgoraClient(
     agoraConnectionData: AgoraConnectionData(
-      appId: "989f207f2a12441a9c71a5db1ee4eeac",
+      appId: "7b10a6ed9aef44d98708e5cdbcdb27ca",
       channelName: "test",
       username: "user",
     ),
