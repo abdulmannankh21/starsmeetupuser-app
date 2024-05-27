@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -73,9 +75,14 @@ class _ChatPageState extends State<ChatPage> {
                   icon: Icon(Icons.videocam),
                   onPressed: () {
                     // Implement video call action
-                    Navigator.push(context,
-                        MaterialPageRoute(builder: (context) => AgoraCalls()));
-                    // Navigator.pushNamed(context, videoCallingScreenRoute);
+                    log("this is channel id:${widget.appointment!.celebrityId}");
+
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => AgoraCalls(
+                                  channelName: widget.appointment!.celebrityId!,
+                                )));
                   },
                 )
               : SizedBox.shrink(),

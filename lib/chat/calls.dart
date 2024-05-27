@@ -5,7 +5,8 @@ import 'package:flutter/material.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 class AgoraCalls extends StatefulWidget {
-  const AgoraCalls({super.key});
+  String channelName;
+  AgoraCalls({super.key, required this.channelName});
 
   @override
   State<AgoraCalls> createState() => _AgoraCallsState();
@@ -14,20 +15,28 @@ class AgoraCalls extends StatefulWidget {
 class _AgoraCallsState extends State<AgoraCalls> {
   static const appId = "989f207f2a12441a9c71a5db1ee4eeac";
   static const token = "";
-  static const channel = "Test_Channel";
+  static String channel = "Test_Channel";
   int? _remoteUid;
   bool _localUserJoined = false;
   late RtcEngine _engine;
   final AgoraClient client = AgoraClient(
     agoraConnectionData: AgoraConnectionData(
       appId: "989f207f2a12441a9c71a5db1ee4eeac",
-      channelName: "test",
+      channelName: channel,
       username: "user",
     ),
   );
   void initState() {
     super.initState();
-    initAgora();
+
+    // initAgora();
+    channel = widget.channelName;
+    // initAgora();
+    if (channel != "" || channel != null) {
+      initAgora();
+    } else {
+      Navigator.pop(context);
+    }
   }
 
   void initAgora() async {
@@ -95,7 +104,7 @@ class _AgoraCallsState extends State<AgoraCalls> {
         controller: VideoViewController.remote(
           rtcEngine: _engine,
           canvas: VideoCanvas(uid: _remoteUid),
-          connection: const RtcConnection(channelId: channel),
+          connection: RtcConnection(channelId: channel),
         ),
       );
     } else {
