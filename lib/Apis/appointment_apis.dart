@@ -206,16 +206,11 @@ class AppointmentService {
         // Parse creationTimestamp string to DateTime object
         DateTime creationTimestamp =
             DateTime.parse(appointment.startTime.toString());
-        // Check if creationTimestamp is within the current year
+
         return creationTimestamp.isAfter(startOfYear) &&
             creationTimestamp.isBefore(endOfYear);
       }).toList();
 
-      log("Appointments for user ID $userId for current year: ${appointments.length}");
-      // if (appointments.length == 0) {
-      //   return [];
-      // }
-      // Print data from each document
       appointments.forEach((appointment) {
         print("this is result ${appointment.toJson()}");
       });

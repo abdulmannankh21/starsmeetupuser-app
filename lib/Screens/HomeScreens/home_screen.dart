@@ -1,14 +1,16 @@
 import 'dart:math';
 
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
+import 'package:get/get.dart';
 import 'package:starsmeetupuser/GlobalWidgets/text_field_widget.dart';
 import 'package:starsmeetupuser/Utilities/app_colors.dart';
 import 'package:starsmeetupuser/Utilities/app_text_styles.dart';
 
 import '../../Apis/celebrities_apis.dart';
+import '../../Apis/fcm_token_service.dart';
 import '../../Apis/notificationController.dart';
 import '../../GlobalWidgets/categories_widget.dart';
 import '../../GlobalWidgets/celebrity_widget.dart';
@@ -16,7 +18,6 @@ import '../../GlobalWidgets/home_category_and_featured_widget.dart';
 import '../../GlobalWidgets/side_drawer_widget.dart';
 import '../../Utilities/app_routes.dart';
 import '../../models/celebrity_model.dart';
-import 'package:get/get.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -83,9 +84,19 @@ class _HomeScreenState extends State<HomeScreen> {
 
   List<CelebrityModel>? celebrities;
   int notificationCount = 0;
+  final FirebaseMessaging _firebaseMessaging = FirebaseMessaging.instance;
 
   @override
   void initState() {
+    FanDeviceTokenHandler().saveFanDeviceToken();
+    _firebaseMessaging.requestPermission();
+    FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+      // Handle incoming messages
+      print("message");
+    });
+    FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
+      // Handle when app is opened from terminated state
+    });
     getCelebritiesList();
     _getNotificationCount();
     super.initState();
@@ -98,12 +109,18 @@ class _HomeScreenState extends State<HomeScreen> {
     });
   }
 
-  getCelebritiesList() async {
-    celebrities = await CelebritiesService().fetchCelebrities();
-    if (kDebugMode) {
-      print(celebrities);
-    }
-    setState(() {});
+  void getCelebritiesList() {
+    CelebritiesService().streamCelebrities().listen(
+        (List<CelebrityModel> data) {
+      setState(() {
+        celebrities = data;
+      });
+    }, onError: (error) {
+      if (kDebugMode) {
+        print('Error fetching celebrities: $error');
+      }
+      // Handle error if necessary
+    });
   }
 
   @override
@@ -168,8 +185,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           // print(
                           //     "this is date only: ${DateFormat('yyyy-MM-dd').format(DateTime.now())}");
                         },
-                        child:
-                            Stack(
+                        child: Stack(
                           children: [
                             Icon(
                               Icons.notifications_active_outlined,
@@ -180,18 +196,19 @@ class _HomeScreenState extends State<HomeScreen> {
                                 : Padding(
                                     padding: const EdgeInsets.only(left: 20.0),
                                     child: AnimatedContainer(
-                                    
                                       decoration: BoxDecoration(
                                         shape: BoxShape.circle,
                                         color: Color(0xffDC1818),
                                       ),
-                                      duration: Duration(microseconds:20),
+                                      duration: Duration(microseconds: 20),
                                       child: Center(
                                         child: Padding(
                                           padding: const EdgeInsets.all(2.0),
                                           child: Text(
                                             '${notificationCount}',
-                                            style: TextStyle(color: Colors.white,fontSize: 9),
+                                            style: TextStyle(
+                                                color: Colors.white,
+                                                fontSize: 9),
                                           ),
                                         ),
                                       ),
@@ -311,15 +328,29 @@ class _HomeScreenState extends State<HomeScreen> {
           const SizedBox(
             height: 10,
           ),
-          celebrities == null
-              ? const CupertinoActivityIndicator()
-              : Expanded(
+          StreamBuilder<List<CelebrityModel>>(
+            stream: CelebritiesService().streamCelebrities(),
+            builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                // Show a loading indicator while waiting for data
+                return const Center(child: CupertinoActivityIndicator());
+              } else if (snapshot.hasError) {
+                // Show an error message if an error occurs
+                return Center(child: Text('Error: ${snapshot.error}'));
+              } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                // Handle case where no data is available
+                return Center(child: Text('No data available'));
+              } else {
+                // Data is available, build UI with the received data
+                List<CelebrityModel> celebrities = snapshot.data!;
+                return Expanded(
                   child: SingleChildScrollView(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
+                        // Your existing code to display categories and celebrities
                         for (int i = 0; i < categories.length; i++)
-                          celebrities!
+                          celebrities
                                   .where((element) =>
                                       element.category == categories[i])
                                   .toList()
@@ -331,28 +362,26 @@ class _HomeScreenState extends State<HomeScreen> {
                                         context, allActorsInCategoryScreenRoute,
                                         arguments: [
                                           categories[i],
-                                          celebrities!
+                                          celebrities
                                               .where((element) =>
                                                   element.category ==
                                                   categories[i])
                                               .toList()
                                         ]);
                                   },
-                                  childWidget: celebrities!
+                                  childWidget: celebrities
                                           .where((element) =>
                                               element.category == categories[i])
                                           .toList()
                                           .isNotEmpty
                                       ? Row(
                                           children: [
-                                            const SizedBox(
-                                              width: 10,
-                                            ),
+                                            const SizedBox(width: 10),
                                             for (int j = 0;
                                                 j <
                                                     min(
                                                         5,
-                                                        celebrities!
+                                                        celebrities
                                                             .where((element) =>
                                                                 element
                                                                     .category ==
@@ -360,13 +389,13 @@ class _HomeScreenState extends State<HomeScreen> {
                                                             .length);
                                                 j++)
                                               CelebrityWidget(
-                                                name: celebrities!
+                                                name: celebrities
                                                     .where((element) =>
                                                         element.category ==
                                                         categories[i])
                                                     .toList()[j]
                                                     .name!,
-                                                image: celebrities!
+                                                image: celebrities
                                                     .where((element) =>
                                                         element.category ==
                                                         categories[i])
@@ -375,7 +404,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                                 onTap: () {
                                                   Navigator.pushNamed(context,
                                                       celebrityProfileScreenRoute,
-                                                      arguments: celebrities!
+                                                      arguments: celebrities
                                                           .where((element) =>
                                                               element
                                                                   .category ==
@@ -391,7 +420,10 @@ class _HomeScreenState extends State<HomeScreen> {
                       ],
                     ),
                   ),
-                )
+                );
+              }
+            },
+          )
         ],
       ),
     );

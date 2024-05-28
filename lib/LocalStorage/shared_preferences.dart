@@ -38,7 +38,6 @@ class MyPreferences {
     _preferences.setString(_email, email!);
   }
 
-
   void setUser({UserModel? user}) {
     _preferences.setString(_user, jsonEncode(user!.toJson()));
   }
@@ -48,6 +47,12 @@ class MyPreferences {
   }
 
   void clearPreferences() {
+    _preferences.setString(_user, '');
+    _preferences.setString(_email, '');
+    _preferences.setString(_phone, '');
+    _preferences.setString(_firstName, '');
+    _preferences.setString(_password, '');
+    _preferences.setString(_token, '');
     _preferences.clear();
   }
 
@@ -64,6 +69,4 @@ class MyPreferences {
     }
     return null;
   }
-
-
 }

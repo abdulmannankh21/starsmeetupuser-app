@@ -273,6 +273,7 @@ class DrawerWidget extends StatelessWidget {
                         text: "Logout",
                         onTap: () {
                           MyPreferences.instance.clearPreferences();
+
                           Authentication().signOut();
                           Navigator.pushNamedAndRemoveUntil(
                             context,

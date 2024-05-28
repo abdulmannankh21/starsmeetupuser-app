@@ -12,12 +12,9 @@ import 'LocalStorage/shared_preferences.dart';
 import 'Screens/AppointmentScreens/appointment_screen.dart';
 import 'Screens/AppointmentScreens/audio_calling_screen.dart';
 import 'Screens/AppointmentScreens/book_calendar_screen.dart';
-import 'Screens/AppointmentScreens/cancelled_appointment_details_screen.dart';
 import 'Screens/AppointmentScreens/cancelled_appointments_screen.dart';
 import 'Screens/AppointmentScreens/checkout_screen.dart';
 import 'Screens/AppointmentScreens/history_appointment_details_screen.dart';
-import 'Screens/AppointmentScreens/upcoming_audio_appointment_details_screen.dart';
-import 'Screens/AppointmentScreens/upcoming_video_appointment_details_screen.dart';
 import 'Screens/AppointmentScreens/video_calling_screen.dart';
 import 'Screens/Authentication/email_verification_screen.dart';
 import 'Screens/Authentication/forgot_password_screen.dart';
@@ -108,7 +105,7 @@ class _MyAppState extends State<MyApp> {
         personalDetailsSettingsScreenRoute: (context) =>
             const PersonalDetailsSettingsScreen(),
         faqScreenRoute: (context) => const FaqScreen(),
-        favouritesScreenRoute: (context) => const FavouritesScreen(),
+        favouritesScreenRoute: (context) => FavouritesScreen(),
         allCategoriesScreenRoute: (context) => const AllCategoriesScreen(),
         audioCallingScreenRoute: (context) => const AudioCallingScreen(),
         forgotPasswordScreenRoute: (context) => const ForgotPasswordScreen(),

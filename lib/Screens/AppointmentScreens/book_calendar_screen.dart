@@ -30,6 +30,7 @@ class _BookingCalendarScreenState extends State<BookingCalendarScreen> {
   DateTime? selectedDay;
   DateTime? startTime;
   DateTime? endTime;
+  bool isLoading = false;
 
   @override
   void initState() {
@@ -45,6 +46,7 @@ class _BookingCalendarScreenState extends State<BookingCalendarScreen> {
 
   void getCurrentDaySlots(int weekday) async {
     setState(() {
+      isLoading = true;
       timeSlots = [];
       isHoliday = false;
     });
@@ -71,6 +73,7 @@ class _BookingCalendarScreenState extends State<BookingCalendarScreen> {
     if (isHoliday) {
       setState(() {
         timeSlots = [];
+        isLoading = false;
         this.isHoliday = true;
       });
     } else {
@@ -81,6 +84,7 @@ class _BookingCalendarScreenState extends State<BookingCalendarScreen> {
 
       setState(() {
         timeSlots = availableTimeSlots;
+        isLoading = false;
         this.isHoliday = false;
       });
     }
@@ -178,13 +182,18 @@ class _BookingCalendarScreenState extends State<BookingCalendarScreen> {
                 weekendStyle: fourteen600TextStyle(),
               ),
               onDaySelected: (selected, focused) {
+                print("selected");
+                // Show loader when data fetching starts
                 setState(() {
                   selectedTime = -1;
                   selectedDay = selected;
                   focusedDay = selected;
                 });
 
-                getCurrentDaySlots(selected.weekday);
+                getCurrentDaySlots(
+                    selected.weekday); // Wait for data fetching to complete
+
+                // Hide loader when data fetching completes
               },
               daysOfWeekHeight: 30,
               firstDay: DateTime.now(),
@@ -205,8 +214,44 @@ class _BookingCalendarScreenState extends State<BookingCalendarScreen> {
               height: 20,
             ),
             if (isHoliday)
-              Padding(
-                padding: const EdgeInsets.all(8.0),
+              const Padding(
+                padding: EdgeInsets.all(8.0),
+                child: Center(
+                  child: Text(
+                    "Time slots are not available for this date.",
+                    style: TextStyle(
+                      color: Colors.red,
+                      fontSize: 16,
+                    ),
+                  ),
+                ),
+              )
+            else if (isLoading)
+              const Expanded(
+                child: Center(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      CupertinoActivityIndicator(
+                        radius: 15.0,
+                        color: purpleColor,
+                      ),
+                      SizedBox(height: 10),
+                      Text(
+                        'Loading please wait...',
+                        style: TextStyle(
+                          color: Colors.black,
+                          fontSize: 16,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              )
+            else if (timeSlots!.isEmpty)
+              const Padding(
+                padding: EdgeInsets.all(8.0),
                 child: Center(
                   child: Text(
                     "Time slots are not available for this date.",
@@ -218,102 +263,68 @@ class _BookingCalendarScreenState extends State<BookingCalendarScreen> {
                 ),
               )
             else
-              timeSlots == null
-                  ? const Center(
-                      child: CupertinoActivityIndicator(),
-                    )
-                  : timeSlots != null && timeSlots!.isEmpty
-                      ? const Column(
+              Expanded(
+                child: Center(
+                  child: SingleChildScrollView(
+                    child: Column(
+                      children: [
+                        Wrap(
+                          alignment: WrapAlignment.spaceBetween,
+                          crossAxisAlignment: WrapCrossAlignment.start,
+                          runSpacing: 10.0,
+                          spacing: 10.0,
                           children: [
-                            SizedBox(
-                              height: 30,
-                            ),
-                            Center(
-                              child: Text(
-                                "Time slots are not available for this date.",
-                                style: TextStyle(
-                                  color: Colors.red,
-                                  fontSize: 16,
+                            for (int i = 0; i < timeSlots!.length; i++)
+                              Container(
+                                width: MediaQuery.of(context).size.width * 0.28,
+                                height: 50,
+                                decoration: BoxDecoration(
+                                  color: selectedTime == i
+                                      ? purpleColor
+                                      : Colors.grey[600],
+                                  borderRadius: BorderRadius.circular(10.0),
                                 ),
-                              ),
-                            ),
-                            SizedBox(
-                              height: 20,
-                            ),
-                          ],
-                        )
-                      : Expanded(
-                          child: Center(
-                            child: SingleChildScrollView(
-                              child: Column(
-                                children: [
-                                  Wrap(
-                                    alignment: WrapAlignment.spaceBetween,
-                                    crossAxisAlignment:
-                                        WrapCrossAlignment.start,
-                                    runSpacing: 10.0,
-                                    spacing: 10.0,
-                                    children: [
-                                      for (int i = 0;
-                                          i < timeSlots!.length;
-                                          i++)
-                                        Container(
-                                          width: MediaQuery.of(context)
-                                                  .size
-                                                  .width *
-                                              0.28,
-                                          height: 50,
-                                          decoration: BoxDecoration(
-                                            color: selectedTime == i
-                                                ? purpleColor
-                                                : Colors.grey[600],
-                                            borderRadius:
-                                                BorderRadius.circular(10.0),
-                                          ),
-                                          child: GestureDetector(
-                                            onTap: () {
-                                              if (selectedTime != i) {
-                                                selectedTime = i;
-                                                startTime =
-                                                    convertTimeStringToDateTime(
-                                                        selectedDay!.year,
-                                                        selectedDay!.month,
-                                                        selectedDay!.day,
-                                                        timeSlots![i]
-                                                            .startTime);
-                                                endTime =
-                                                    convertTimeStringToDateTime(
-                                                        selectedDay!.year,
-                                                        selectedDay!.month,
-                                                        selectedDay!.day,
-                                                        timeSlots![i].endTime);
-                                                appointment!.timeSlotId =
-                                                    timeSlots![i].id;
-                                              } else {
-                                                selectedTime = -1;
-                                                startTime = null;
-                                                endTime = null;
-                                              }
+                                child: GestureDetector(
+                                  onTap: () {
+                                    if (selectedTime != i) {
+                                      selectedTime = i;
+                                      startTime = convertTimeStringToDateTime(
+                                          selectedDay!.year,
+                                          selectedDay!.month,
+                                          selectedDay!.day,
+                                          timeSlots![i].startTime);
+                                      endTime = convertTimeStringToDateTime(
+                                          selectedDay!.year,
+                                          selectedDay!.month,
+                                          selectedDay!.day,
+                                          timeSlots![i].endTime);
+                                      appointment!.timeSlotId =
+                                          timeSlots![i].id;
+                                    } else {
+                                      selectedTime = -1;
+                                      startTime = null;
+                                      endTime = null;
+                                    }
 
-                                              setState(() {});
-                                            },
-                                            child: Center(
-                                              child: Text(
-                                                timeSlots![i].startTime,
-                                                style: sixteen600TextStyle(
-                                                  color: Colors.white,
-                                                ),
-                                              ),
-                                            ),
-                                          ),
-                                        )
-                                    ],
+                                    setState(() {});
+                                  },
+                                  child: Center(
+                                    child: Text(
+                                      timeSlots![i].startTime,
+                                      style: sixteen600TextStyle(
+                                        color: Colors.white,
+                                      ),
+                                    ),
                                   ),
-                                ],
-                              ),
-                            ),
-                          ),
+                                ),
+                              )
+                          ],
                         ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
             const SizedBox(
               height: 20,
             ),

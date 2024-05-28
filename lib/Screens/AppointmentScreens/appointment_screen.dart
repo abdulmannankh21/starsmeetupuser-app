@@ -1,12 +1,9 @@
 import 'dart:developer';
 
-import 'package:custom_date_range_picker/custom_date_range_picker.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get/instance_manager.dart';
-import 'package:get_storage/get_storage.dart';
 import 'package:intl/intl.dart';
 import 'package:starsmeetupuser/Apis/historyyController.dart';
 import 'package:starsmeetupuser/Screens/AppointmentScreens/upcoming_audio_appointment_details_screen.dart';
@@ -17,9 +14,9 @@ import 'package:starsmeetupuser/models/historyModel.dart';
 
 import '../../Apis/appointment_apis.dart';
 import '../../GlobalWidgets/button_widget.dart';
+import '../../GlobalWidgets/custom_date_picker.dart';
 import '../../GlobalWidgets/upcoming_appointment_widget.dart';
 import '../../Utilities/app_colors.dart';
-import '../../Utilities/app_routes.dart';
 import '../../Utilities/app_text_styles.dart';
 import '../../models/appointment_model.dart';
 
@@ -313,14 +310,14 @@ class _AppointmentScreenState extends State<AppointmentScreen>
                         child: FutureBuilder<List<HistoryModel>>(
                           future: futureHistory,
                           builder: (context, snapshot) {
-
                             if (snapshot.connectionState ==
                                 ConnectionState.waiting) {
                               return Center(child: CircularProgressIndicator());
                             } else if (snapshot.hasError) {
                               return Center(
                                   child: Text('Error: ${snapshot.error}'));
-                            } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                            } else if (!snapshot.hasData ||
+                                snapshot.data!.isEmpty) {
                               return Center(
                                   child: Text(
                                       'There is no Appointment Avaiable!'));
@@ -478,7 +475,8 @@ class _AppointmentScreenState extends State<AppointmentScreen>
                               setState(() {
                                 upcomingSelectedDays = newValue!;
                                 if (upcomingSelectedDays == "Custom") {
-                                  _selectDate(context, "upComing");
+                                  Navigator.of(context).pop();
+                                  _showHolidayModeDialog(context, 'upComing');
                                 }
                                 Range = null;
                               });
@@ -647,7 +645,7 @@ class _AppointmentScreenState extends State<AppointmentScreen>
                               setState(() {
                                 historySelectedDays = newValue!;
                                 if (historySelectedDays == "Custom") {
-                                  _selectDate(context, "history");
+                                  _showHolidayModeDialog(context, 'history');
                                 }
                               });
                             },
@@ -706,63 +704,93 @@ class _AppointmentScreenState extends State<AppointmentScreen>
     );
   }
 
-  Future<void> _selectDate(BuildContext context, String type) async {
-    showCustomDateRangePicker(
-      context,
-      dismissible: true,
-      minimumDate: DateTime.now().subtract(const Duration(days: 365)),
-      maximumDate: DateTime.now().add(const Duration(days: 365)),
-      endDate: DateTime.now(),
-      startDate: DateTime.now(),
-      backgroundColor: Colors.white,
-      primaryColor: purpleColor,
-      onApplyClick: (start, end) {
-        setState(() {
-          log("this is the date:${start}     ${end}");
-          if (start != null || end != null) {
-            if (type == "upComing") {
-              futureAppointments = _loadAppointmentWithCustom(start!, end!);
-              // Get.back();
-            } else {
-              futureHistory = _loadHistoryeithCustom(start!, end!);
-              //
-            }
-            // GetStorage().write("startDate", start);
-            // GetStorage().write("endDate", end);
-            setState(() {
+  // Future<void> _selectDate(BuildContext context, String type) async {
+  //   showCustomDateRangePicker(
+  //     context,
+  //     dismissible: true,
+  //     minimumDate: DateTime.now().subtract(const Duration(days: 365)),
+  //     maximumDate: DateTime.now().add(const Duration(days: 365)),
+  //     endDate: DateTime.now(),
+  //     startDate: DateTime.now(),
+  //     backgroundColor: Colors.white,
+  //     primaryColor: purpleColor,
+  //     onApplyClick: (start, end) {
+  //       setState(() {
+  //         log("this is the date:${start}     ${end}");
+  //         if (start != null || end != null) {
+  //           if (type == "upComing") {
+  //             futureAppointments = _loadAppointmentWithCustom(start!, end!);
+  //             // Get.back();
+  //           } else {
+  //             futureHistory = _loadHistoryeithCustom(start!, end!);
+  //             //
+  //           }
+  //           // GetStorage().write("startDate", start);
+  //           // GetStorage().write("endDate", end);
+  //           setState(() {
+  //             Range =
+  //                 "${DateFormat('dd-MMM-yy').format(start)} / ${DateFormat('dd-MMM-yy').format(end)}";
+  //           });
+  //           Navigator.pop(context);
+  //           setState(() {});
+  //         }
+  //         // endDate = end;
+  //         // startDate = start;
+  //       });
+  //     },
+  //     onCancelClick: () {
+  //       setState(() {
+  //         Navigator.pop(context);
+  //         // endDate = null;
+  //         // startDate = null;
+  //       });
+  //     },
+  //   );
+  //
+  //   // Navigator.pop(context);
+  //   //
+  //   // final pickedDateRange = await showDateRangePicker(
+  //   //
+  //   //   context: context,
+  //   //   firstDate: DateTime.now().subtract(Duration(days: 365)),
+  //   //   lastDate: DateTime.now(),
+  //   //   initialDateRange: DateTimeRange(
+  //   //     start: DateTime.now().subtract(Duration(days: 7)),
+  //   //     end: DateTime.now(),
+  //   //   ),
+  //   // );
+  //   //
+  //   //
+  // }
+  void _showHolidayModeDialog(BuildContext context, type) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return HolidayModeDialog(
+          onHolidayModeSelected: (startDate, endDate) async {
+            // Handle the selected values here
+            if (startDate != null && endDate != null) {
+              if (type == "upComing") {
+                futureAppointments =
+                    _loadAppointmentWithCustom(startDate!, endDate!);
+                // Get.back();
+              } else {
+                futureHistory = _loadHistoryeithCustom(startDate!, endDate!);
+                //
+              }
+
               Range =
-                  "${DateFormat('dd-MMM-yy').format(start)} / ${DateFormat('dd-MMM-yy').format(end)}";
-            });
-            Navigator.pop(context);
-            setState(() {});
-          }
-          // endDate = end;
-          // startDate = start;
-        });
-      },
-      onCancelClick: () {
-        setState(() {
-          Navigator.pop(context);
-          // endDate = null;
-          // startDate = null;
-        });
+                  "${DateFormat('dd-MMM-yy').format(startDate)} / ${DateFormat('dd-MMM-yy').format(endDate)}";
+
+              Navigator.of(context).pop();
+              setState(() {});
+            } else {
+              print('Holiday mode removed');
+            }
+          },
+        );
       },
     );
-
-    // Navigator.pop(context);
-    //
-    // final pickedDateRange = await showDateRangePicker(
-    //
-    //   context: context,
-    //   firstDate: DateTime.now().subtract(Duration(days: 365)),
-    //   lastDate: DateTime.now(),
-    //   initialDateRange: DateTimeRange(
-    //     start: DateTime.now().subtract(Duration(days: 7)),
-    //     end: DateTime.now(),
-    //   ),
-    // );
-    //
-    //
   }
 
 // Future<void> _selectDate(BuildContext context, String type) async {

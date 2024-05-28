@@ -12,6 +12,7 @@ class CelebrityModel {
   String? profilePicture;
   String? backgroundPicture;
   String? category;
+  bool? favorite;
   bool? supportYourStar;
 
   CelebrityModel({
@@ -25,6 +26,7 @@ class CelebrityModel {
     this.createdAt,
     this.phoneVerificationId,
     this.supportYourStar,
+    this.favorite,
     this.updatedAt,
     this.status,
     this.profilePicture,
@@ -42,6 +44,7 @@ class CelebrityModel {
     supportYourStar = json['supportYourStar'];
     createdAt = json['CreatedAt'];
     phoneVerificationId = json['PhoneVerificationId'];
+    favorite = json['favorite'];
     updatedAt = json['UpdatedAt'];
     status = json['Status'];
     profilePicture = json['profilePicture'];
@@ -60,6 +63,7 @@ class CelebrityModel {
     data['category'] = category;
     data['CreatedAt'] = createdAt;
     data['PhoneVerificationId'] = phoneVerificationId;
+    data['favorite'] = favorite;
     data['UpdatedAt'] = updatedAt;
     data['Status'] = status;
     data['profilePicture'] = profilePicture;

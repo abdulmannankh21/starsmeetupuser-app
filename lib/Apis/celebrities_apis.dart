@@ -3,23 +3,64 @@ import 'package:flutter/foundation.dart';
 import 'package:starsmeetupuser/models/celebrity_model.dart';
 
 class CelebritiesService {
-  Future<List<CelebrityModel>> fetchCelebrities() async {
-    List<CelebrityModel> users = [];
+  Stream<List<CelebrityModel>> streamCelebrities() {
     try {
-      QuerySnapshot<Map<String, dynamic>> querySnapshot =
-          await FirebaseFirestore.instance.collection('celebrities').get();
+      Stream<QuerySnapshot<Map<String, dynamic>>> snapshots =
+          FirebaseFirestore.instance.collection('celebrities').snapshots();
 
-      users =
-          querySnapshot.docs.map((DocumentSnapshot<Map<String, dynamic>> doc) {
-        return CelebrityModel.fromJson(doc.data()!);
-      }).toList();
-
-      return users;
+      // Convert the stream of snapshots to a stream of lists of CelebrityModel
+      return snapshots.map((snapshot) => snapshot.docs
+          .map((doc) => CelebrityModel.fromJson(doc.data()!))
+          .toList());
     } catch (e) {
       if (kDebugMode) {
-        print('Error fetching users: $e');
+        print('Error streaming celebrities: $e');
       }
-      return [];
+      // Return an empty stream in case of error
+      return Stream.value([]);
+    }
+  }
+
+  Future<void> addToFavorites(String userId, String celebrityId) async {
+    try {
+      // Update the 'favorite' field in the celebrity document
+      await FirebaseFirestore.instance
+          .collection('celebrities')
+          .doc(celebrityId)
+          .update({'favorite': true});
+    } catch (e) {
+      if (kDebugMode) {
+        print('Error adding to favorites: $e');
+      }
+      // Handle error
+    }
+  }
+
+  Stream<bool> isFavoriteStream(String userId) {
+    try {
+      return FirebaseFirestore.instance
+          .collection('celebrities')
+          .doc(userId)
+          .snapshots()
+          .map((snapshot) => snapshot.data()?['favorite'] ?? false);
+    } catch (e) {
+      print('Error streaming favorite status: $e');
+      return Stream.value(false);
+    }
+  }
+
+  Future<void> removeFromFavorites(String userId, String celebrityId) async {
+    try {
+      // Update the 'favorite' field in the celebrity document
+      await FirebaseFirestore.instance
+          .collection('celebrities')
+          .doc(celebrityId)
+          .update({'favorite': false});
+    } catch (e) {
+      if (kDebugMode) {
+        print('Error removing from favorites: $e');
+      }
+      // Handle error
     }
   }
 }
