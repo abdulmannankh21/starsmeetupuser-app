@@ -2,11 +2,12 @@ import 'package:agora_rtc_engine/agora_rtc_engine.dart';
 import 'package:agora_uikit/agora_uikit.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:permission_handler/permission_handler.dart';
+import 'package:flutter_timer_countdown/flutter_timer_countdown.dart';
 
 class AgoraCalls extends StatefulWidget {
   String channelName;
-  AgoraCalls({super.key, required this.channelName});
+  DateTime endTime;
+  AgoraCalls({super.key, required this.channelName, required this.endTime});
 
   @override
   State<AgoraCalls> createState() => _AgoraCallsState();
@@ -59,7 +60,30 @@ class _AgoraCallsState extends State<AgoraCalls> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Agora Video Call'),
+        centerTitle: true,
+        title: Row(
+          children: [
+            Text(
+              "Will End ",
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
+            ),
+            TimerCountdown(
+              spacerWidth: 5,
+              enableDescriptions: false,
+              timeTextStyle:
+                  TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
+              minutesDescription: "",
+              secondsDescription: "",
+              format: CountDownTimerFormat.minutesSeconds,
+              endTime: widget.endTime,
+              onEnd: () {
+                print("Timer finished");
+                _dispose();
+                Navigator.pop(context);
+              },
+            ),
+          ],
+        ),
       ),
       body: Stack(
         children: [

@@ -72,6 +72,8 @@ dependencies:
   get_storage:
   agora_uikit: ^1.3.10
   badges:
+  timer_count_down: ^2.2.2
+  flutter_timer_countdown: ^1.0.7
 
 dev_dependencies:
   flutter_test:

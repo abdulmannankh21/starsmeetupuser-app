@@ -75,14 +75,34 @@ class _ChatPageState extends State<ChatPage> {
                   icon: Icon(Icons.videocam),
                   onPressed: () {
                     // Implement video call action
-                    log("this is channel id:${widget.appointment!.celebrityId}");
+                    log("this is channel id:${DateTime.now().add(Duration(minutes: 3))}");
+                    if (DateTime.now().isAfter(widget.appointment!.startTime!
+                            .subtract(Duration(minutes: 1))) &&
+                        widget.appointment!.endTime!.isAfter(DateTime.now())) {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => AgoraCalls(
+                                    channelName:
+                                        widget.appointment!.timeSlotId!,
+                                    endTime: widget.appointment!.endTime!,
+                                  )));
+                    } else {
+                      final snackBar = SnackBar(
+                        content:
+                            Text('You are unable to start before Start time'),
+                        duration: Duration(seconds: 3), // Optional duration
+                        // action: SnackBarAction(
+                        //   label: 'Close',
+                        //   onPressed: () {
+                        //     // Some action to take when the user presses the action button
+                        //   },
+                        // ),
+                      );
 
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => AgoraCalls(
-                                  channelName: widget.appointment!.celebrityId!,
-                                )));
+                      // Show the Snackbar using the ScaffoldMessenger
+                      ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                    }
                   },
                 )
               : SizedBox.shrink(),
