@@ -46,6 +46,7 @@ class _AgoraCallsState extends State<AgoraCalls> {
     channel = widget.channelName;
     // initAgora();
     if (channel != "" || channel != null) {
+      channel = "test";
       initAgora();
     } else {
       Navigator.pop(context);
@@ -54,23 +55,23 @@ class _AgoraCallsState extends State<AgoraCalls> {
 
   void initAgora() async {
     await client.initialize();
-    client.engine.registerEventHandler(RtcEngineEventHandler(
-      onJoinChannelSuccess: (connection, remoteUid) {
-        log("this is channel id: ${connection.channelId}");
-      },
-      onUserJoined: (connection, remoteUid, elapsed) async {
-        Ui.value = true;
+    // client.engine.registerEventHandler(RtcEngineEventHandler(
+    //   onJoinChannelSuccess: (connection, remoteUid) {
+    //     log("this is channel id: ${connection.channelId}");
+    //   },
+    //   onUserJoined: (connection, remoteUid, elapsed) async {
+    //     Ui.value = true;
 
-        log("user is jpoined");
-      },
-      onLeaveChannel: (connection, stats) async {
-        log("user is not jpoined: ${connection.channelId}");
-        Ui.value = true;
-        await client.engine.leaveChannel();
-      },
-    ));
-    await client.engine.joinChannel(
-        token: "", channelId: channel, uid: 0, options: ChannelMediaOptions());
+    //     log("user is jpoined");
+    //   },
+    //   onLeaveChannel: (connection, stats) async {
+    //     log("user is not jpoined: ${connection.channelId}");
+    //     Ui.value = true;
+    //     await client.engine.leaveChannel();
+    //   },
+    // ));
+    // await client.engine.joinChannel(
+    //     token: "", channelId: channel, uid: 0, options: ChannelMediaOptions());
     // await client.engine.j();
   }
 
@@ -99,6 +100,16 @@ class _AgoraCallsState extends State<AgoraCalls> {
           AgoraVideoButtons(
             client: client,
             addScreenSharing: false, // Add this to enable screen sharing
+            switchCameraButtonChild: Container(
+              height: 60,
+              width: 60,
+              decoration: BoxDecoration(
+                  shape: BoxShape.circle, color: Colors.grey.withOpacity(0.6)),
+              child: Icon(
+                Icons.switch_camera,
+                color: Colors.white,
+              ),
+            ),
 
             disableVideoButtonChild: Obx(
               () => GestureDetector(
@@ -151,6 +162,7 @@ class _AgoraCallsState extends State<AgoraCalls> {
               ),
             ),
             enabledButtons: [
+              BuiltInButtons.switchCamera,
               BuiltInButtons.callEnd,
               BuiltInButtons.toggleCamera,
               BuiltInButtons.toggleMic
@@ -200,46 +212,46 @@ class _AgoraCallsState extends State<AgoraCalls> {
               ],
             ),
           ),
-          Positioned(
-            top: 40,
-            right: 0,
-            child: AgoraVideoButtons(
-              switchCameraButtonChild: Container(
-                height: 60,
-                width: 60,
-                decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    color: Colors.grey.withOpacity(0.6)),
-                child: Icon(
-                  Icons.switch_camera,
-                  color: Colors.white,
-                ),
-              ),
-              buttonAlignment: Alignment.centerRight,
-              client: client,
-              addScreenSharing: false,
-              enabledButtons: [
-                BuiltInButtons.switchCamera,
-              ],
-            ),
-          ),
-          Ui.value == false
-              ? Padding(
-                  padding: const EdgeInsets.only(top: 200),
-                  child: Align(
-                    alignment: Alignment.topCenter,
-                    child: CircleAvatar(
-                      radius: 50,
-                      backgroundColor: Colors.grey,
-                      child: Icon(
-                        Icons.person,
-                        size: 40,
-                        color: Colors.white,
-                      ),
-                    ),
-                  ),
-                )
-              : SizedBox(),
+          // Positioned(
+          //   top: 40,
+          //   right: 0,
+          //   child: AgoraVideoButtons(
+          //     switchCameraButtonChild: Container(
+          //       height: 60,
+          //       width: 60,
+          //       decoration: BoxDecoration(
+          //           shape: BoxShape.circle,
+          //           color: Colors.grey.withOpacity(0.6)),
+          //       child: Icon(
+          //         Icons.switch_camera,
+          //         color: Colors.white,
+          //       ),
+          //     ),
+          //     buttonAlignment: Alignment.centerRight,
+          //     client: client,
+          //     addScreenSharing: false,
+          //     enabledButtons: [
+          //       BuiltInButtons.switchCamera,
+          //     ],
+          //   ),
+          // ),
+          // Ui.value == false
+          //     ? Padding(
+          //         padding: const EdgeInsets.only(top: 200),
+          //         child: Align(
+          //           alignment: Alignment.topCenter,
+          //           child: CircleAvatar(
+          //             radius: 50,
+          //             backgroundColor: Colors.grey,
+          //             child: Icon(
+          //               Icons.person,
+          //               size: 40,
+          //               color: Colors.white,
+          //             ),
+          //           ),
+          //         ),
+          //       )
+          //     : SizedBox(),
           // Center(
           //   child: _remoteVideo(),
           // ),
