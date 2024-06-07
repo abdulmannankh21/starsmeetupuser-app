@@ -1,12 +1,15 @@
+import 'dart:convert';
 import 'dart:developer';
 
+import 'package:camera/camera.dart';
+import 'package:cloud_functions/cloud_functions.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:starsmeetupuser/chat/audio_Calls.dart';
 // import 'package:starsmeetupuser/chat/audio_call_test.dart';
 import 'package:starsmeetupuser/chat/calls.dart';
-
+import 'package:http/http.dart' as http;
 import '../../Utilities/app_colors.dart';
 import '../../Utilities/app_text_styles.dart';
 import '../Apis/chat_service.dart';
@@ -28,6 +31,8 @@ class _ChatPageState extends State<ChatPage> {
   final TextEditingController _messageController = TextEditingController();
   late final ChatService _chatService;
   late final FirebaseAuth _auth;
+
+
   String _userName = '';
   late AppointmentModel _appointment;
   var _isStarMessageAvailable;
@@ -47,6 +52,24 @@ class _ChatPageState extends State<ChatPage> {
         print("s$_isStarMessageAvailable ");
       });
     });
+  }
+  Future<void> sendNotificationToCelebrity({required String name}) async {
+    final HttpsCallable callable = FirebaseFunctions.instance.httpsCallable('sendNotificationToCelebrity');
+
+    try {
+      final response = await callable.call(<String, dynamic>{
+        'token': 'CELEBRITY_FCM_TOKEN', // Replace with the celebrity's FCM token
+        'name': name,
+      });
+
+      if (response.data['success']) {
+        log("FCM message sent successfully.");
+      } else {
+        log("Failed to send FCM message. Error: ${response.data['error']}");
+      }
+    } catch (e) {
+      log("Error sending notification: $e");
+    }
   }
 
   @override
@@ -73,7 +96,11 @@ class _ChatPageState extends State<ChatPage> {
           (widget.appointment!.serviceName == "Video Meeting")
               ? IconButton(
                   icon: Icon(Icons.videocam),
-                  onPressed: () {
+                  onPressed: () async{
+                    final cameras = await availableCameras();
+
+                    // Get a specific camera from the list of available cameras.
+                    final firstCamera = cameras.firstWhere((camera) => camera.lensDirection==CameraLensDirection.front);
                     log("time solt id: ${widget.appointment!.timeSlotId!}");
                     Navigator.push(
                         context,

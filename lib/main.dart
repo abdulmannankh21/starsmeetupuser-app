@@ -39,10 +39,12 @@ import 'Screens/SettingsScreens/privacy_policy_screen.dart';
 import 'Screens/SettingsScreens/settings_screen.dart';
 import 'Screens/SettingsScreens/terms_of_use_screen.dart';
 import 'Utilities/app_routes.dart';
+import 'functions/notification_service.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
+  NotificationService().initialize();
   FirebaseMessaging messaging = FirebaseMessaging.instance;
   await MyPreferences.instance.init();
   await GetStorage.init();

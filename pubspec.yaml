@@ -74,6 +74,8 @@ dependencies:
   badges:
   timer_count_down: ^2.2.2
   flutter_timer_countdown: ^1.0.7
+  cloud_functions:
+  camera:
 
 dev_dependencies:
   flutter_test:
