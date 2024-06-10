@@ -40,12 +40,13 @@ import 'Screens/SettingsScreens/settings_screen.dart';
 import 'Screens/SettingsScreens/terms_of_use_screen.dart';
 import 'Utilities/app_routes.dart';
 import 'functions/notification_service.dart';
-
+Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message)async {
+  await Firebase.initializeApp();
+}
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
-  NotificationService().initialize();
-  FirebaseMessaging messaging = FirebaseMessaging.instance;
+  FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
   await MyPreferences.instance.init();
   await GetStorage.init();
   runApp(const MyApp());

@@ -2,8 +2,10 @@ import 'dart:convert';
 import 'dart:developer';
 
 import 'package:camera/camera.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cloud_functions/cloud_functions.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:starsmeetupuser/chat/audio_Calls.dart';
@@ -53,22 +55,70 @@ class _ChatPageState extends State<ChatPage> {
       });
     });
   }
-  Future<void> sendNotificationToCelebrity({required String name}) async {
-    final HttpsCallable callable = FirebaseFunctions.instance.httpsCallable('sendNotificationToCelebrity');
+  Future<void> sendNotification() async {
+    // Ensure widget.appointment is not null
+    if (widget.appointment == null) {
+      print('Appointment is null');
+      return;
+    }
+
+    // Get the celebrity ID
+    final String celebrityId = widget.appointment!.celebrityId!;
+
+    // Reference to the Firestore document
+    DocumentReference docRef = FirebaseFirestore.instance.collection('celebrities').doc(celebrityId);
 
     try {
-      final response = await callable.call(<String, dynamic>{
-        'token': 'CELEBRITY_FCM_TOKEN', // Replace with the celebrity's FCM token
-        'name': name,
-      });
+      // Fetch the document snapshot
+      DocumentSnapshot docSnapshot = await docRef.get();
 
-      if (response.data['success']) {
-        log("FCM message sent successfully.");
+      if (docSnapshot.exists) {
+        // Get the fcmtoken field
+        String? fcmtoken = docSnapshot['fcmtoken'] as String?;
+
+        if (fcmtoken != null) {
+          var data = {
+            'to': fcmtoken,
+            'notification': {
+              'title': 'Video Call Start',
+              'body': 'Subscribe to my channel',
+              'sound': 'jetsons_doorbell.mp3',
+            },
+            'android': {
+              'notification': {
+                'notification_count': 23,
+              },
+            },
+            'data': {
+              'type': 'msj',
+              'id': 'Asif Taj',
+            },
+          };
+
+          await http.post(
+            Uri.parse('https://fcm.googleapis.com/fcm/send'),
+            body: jsonEncode(data),
+            headers: {
+              'Content-Type': 'application/json; charset=UTF-8',
+              'Authorization': 'key=YOUR_SERVER_KEY_HERE', // Replace with your actual server key
+            },
+          ).then((response) {
+            if (kDebugMode) {
+              print(response.body.toString());
+            }
+          }).onError((error, stackTrace) {
+            if (kDebugMode) {
+              print(error);
+            }
+          });
+        } else {
+          print('fcmtoken is null');
+        }
       } else {
-        log("Failed to send FCM message. Error: ${response.data['error']}");
+        print('Document does not exist');
       }
     } catch (e) {
-      log("Error sending notification: $e");
+      print('Error fetching document: $e');
     }
   }
 
@@ -112,6 +162,7 @@ class _ChatPageState extends State<ChatPage> {
                                       DateTime.now().add(Duration(minutes: 20)),
                                 )));
                     log("this is channel id:${DateTime.now().add(Duration(minutes: 3))}");
+
                     // if (DateTime.now().isAfter(widget.appointment!.startTime!
                     //         .subtract(Duration(minutes: 1))) &&
                     //     widget.appointment!.endTime!.isAfter(DateTime.now())) {

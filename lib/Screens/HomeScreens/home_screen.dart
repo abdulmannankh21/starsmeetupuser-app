@@ -17,6 +17,7 @@ import '../../GlobalWidgets/celebrity_widget.dart';
 import '../../GlobalWidgets/home_category_and_featured_widget.dart';
 import '../../GlobalWidgets/side_drawer_widget.dart';
 import '../../Utilities/app_routes.dart';
+import '../../functions/notification_service.dart';
 import '../../models/celebrity_model.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -85,17 +86,30 @@ class _HomeScreenState extends State<HomeScreen> {
   List<CelebrityModel>? celebrities;
   int notificationCount = 0;
   final FirebaseMessaging _firebaseMessaging = FirebaseMessaging.instance;
+  NotificationServices notificationServices = NotificationServices();
 
   @override
   void initState() {
     FanDeviceTokenHandler().saveFanDeviceToken();
-    _firebaseMessaging.requestPermission();
-    FirebaseMessaging.onMessage.listen((RemoteMessage message) {
-      // Handle incoming messages
-      print("message");
-    });
-    FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
-      // Handle when app is opened from terminated state
+    // _firebaseMessaging.requestPermission();
+    // FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+    //   // Handle incoming messages
+    //   print("message");
+    // });
+    // FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
+    //   // Handle when app is opened from terminated state
+    // });
+    notificationServices.requestNotificationPermission();
+    notificationServices.forgroundMessage();
+    notificationServices.firebaseInit(context);
+    notificationServices.setupInteractMessage(context);
+    notificationServices.isTokenRefresh();
+
+    notificationServices.getDeviceToken().then((value){
+      if (kDebugMode) {
+        print('device token');
+        print(value);
+      }
     });
     getCelebritiesList();
     _getNotificationCount();
